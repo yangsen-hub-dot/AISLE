@@ -59,7 +59,7 @@
     },
     solid: {
       heading: 'Predict solid electrolyte properties.',
-      video: 'solid-electrolyte.mp4?v=arrows-1', poster: 'solid-electrolyte-card.webp', duration: 42.28,
+      video: 'solid-electrolyte.mp4?v=arrows-1', duration: 42.28,
       source: 'PSI-Bench · Schematic evaluation workflow',
       nodes: [
         ['Crystal', 48, 43, 0, 'The reference structure provides scientific context for the prediction task.'],
@@ -163,7 +163,7 @@
                 </button>
               </div>
               <div class="task-map-screen">
-                <video src="assets/workflows/${task.video}" poster="assets/${task.poster}" controls playsinline preload="none" aria-label="${task.heading}"></video>
+                <video src="assets/workflows/${task.video}"${task.poster ? ` poster="assets/${task.poster}"` : ''} controls playsinline preload="${task.poster ? 'none' : 'metadata'}" aria-label="${task.heading}"></video>
               </div>
               <div class="task-map-controls">
                 <input class="task-map-seek" data-map-seek type="range" min="0" max="${task.duration}" step="0.1" value="0" aria-label="Video position">
