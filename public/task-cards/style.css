@@ -367,10 +367,10 @@ body[data-task=constraints] .task-film video{aspect-ratio:43/27}
   border-bottom-color: var(--ink);
 }
 
-#task-quantum-dot .card-art { background: #f7f7fb; }
-#task-quantum-dot .card-art img { object-fit: contain; }
+#task-quantum-dot .card-art { aspect-ratio: auto; background: #f7f7fb; }
+#task-quantum-dot .card-art img { height: auto; object-fit: contain; }
 #task-quantum-dot:hover .card-art img { transform: none; }
-#task-quantum-dot .cover-source { bottom: 0; background: #f7f7fb; }
+#task-quantum-dot .cover-source { position: static; display: block; padding: 6px 10px; border-radius: 0; background: #f7f7fb; }
 
 .card-content {
   gap: 8px;
