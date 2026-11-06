@@ -48,7 +48,7 @@ body[data-page="catalog"] { background: #f7f5ef; color: #243547; }
 .catalogue-main .task-card:focus-within { outline: 2px solid #47746f; outline-offset: 3px; }
 .catalogue-main .task-card.is-previewed { border-color: #658d7b; }
 .catalogue-main .card-art, .catalogue-main #task-quantum-dot .card-art { aspect-ratio: 16 / 9; padding: 0; border-bottom: 1px solid #e3e7e0; background: #f0f1eb; }
-.catalogue-main .card-art img, .catalogue-main #task-quantum-dot .card-art img { display: block; width: 100%; height: 100%; object-fit: contain; transform: none; }
+.catalogue-main .card-art img, .catalogue-main .card-art video, .catalogue-main #task-quantum-dot .card-art img { display: block; width: 100%; height: 100%; object-fit: contain; transform: none; }
 .card-number { position: absolute; left: 12px; top: 12px; border: 1px solid #ffffffbd; border-radius: 4px; padding: 4px 7px; background: #fffefaed; color: #435856; font-size: 9px; letter-spacing: .09em; font-weight: 600; }
 .catalogue-main .card-content { padding: 20px 22px 16px; gap: 0; }
 .card-status-row { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; margin-bottom: 12px; }

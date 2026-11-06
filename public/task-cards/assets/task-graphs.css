@@ -105,7 +105,7 @@
 .task-map-play-text { display: grid; gap: 2px; min-width: 76px; font-size: 13px; }
 .task-map-play-text small { color: var(--map-muted); font-size: 11px; font-variant-numeric: tabular-nums; }
 .task-map-screen { position: relative; overflow: hidden; border-radius: 5px; background: var(--map-paper); }
-.task-map-screen video { display: block; width: 100%; aspect-ratio: 8 / 5; object-fit: contain; }
+.task-map-screen video { display: block; width: 100%; height: auto; aspect-ratio: auto 8 / 5; object-fit: contain; }
 .task-map-controls { align-items: center; gap: 14px; padding: 9px 0 0; }
 .task-map-seek {
   display: block;
@@ -167,7 +167,6 @@
 @media (min-width: 781px) {
   .task-map-feature .task-map-layout { grid-template-columns: 200px minmax(0, 1fr); }
   .task-map-feature .task-map-network { height: 300px; }
-  .task-map-feature .task-map-player:not(:fullscreen) video { height: 360px; max-height: 34vw; aspect-ratio: auto; }
   .task-map-feature .task-map-illustration img { max-height: 360px; object-fit: contain; }
 }
 @media (max-width: 780px) {
