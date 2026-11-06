@@ -43,6 +43,9 @@
 
 .qd-summary { border-top: 7px solid var(--blue); }
 .qd-loop { border-top: 7px solid var(--ochre); }
+.qd-workflow-illustration { margin: 24px 0 0; }
+.qd-workflow-illustration img { display: block; width: 100%; height: auto; }
+.qd-workflow-illustration figcaption { margin-top: 10px; color: var(--muted); font-size: 12px; line-height: 1.6; }
 .qd-score { border-left: 7px solid var(--red); }
 .qd-target > strong { color: var(--blue); }
 .qd-observation-pair > div { border-left-color: var(--blue); }
