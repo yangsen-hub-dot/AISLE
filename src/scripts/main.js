@@ -57,7 +57,7 @@ if (entrance) {
     let observer;
     let pendingAnchor = location.hash;
     const scrollToCatalogueAnchor = () => {
-      if (!['#featured-case', '#task-quantum-dot'].includes(pendingAnchor)) return;
+      if (!['#featured-case', '#task-quantum-dot', '#task-buchwald-hartwig'].includes(pendingAnchor)) return;
       const target = catalogueFrame.contentDocument?.getElementById(pendingAnchor.slice(1));
       if (target?.getClientRects().length && catalogueFrame.getClientRects().length) {
         target.scrollIntoView({ block: 'start' });
