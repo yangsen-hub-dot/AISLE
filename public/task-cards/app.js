@@ -12,6 +12,17 @@ const taskEntries = [
  {id:'quantum-dot',cardId:'task-quantum-dot',title:'Quantum Dot Formulation Optimisation',description:'Use measured spectra and a limited query budget to find the strongest fluorescence at 600 nm.',tags:["Experimental optimisation", "48 formulations"],media:"PROPOSED TASK · WORKFLOW ILLUSTRATION",href:'quantum-dot.html',poster:'quantum-dot-workflow-card.webp'},
  {id:'buchwald-hartwig',cardId:'task-buchwald-hartwig',title:'Buchwald–Hartwig Reaction Optimisation',description:'Choose reaction conditions and use measured yield feedback to find a successful C–N coupling within four experiments.',tags:["Experimental optimisation", "4 experiments"],media:"PROPOSED TASK · WORKFLOW ILLUSTRATION",href:'buchwald-hartwig.html',poster:'buchwald-hartwig-workflow-card.webp'}
 ];
+// Catalogue facts describe the task protocol, rather than parameters in its film.
+const catalogueFacts = {
+ colour: { collection: 'benchmark', status: 'AISLE benchmark', environment: 'Wet lab + simulation', label: 'Budget', value: '12 scored experiments' },
+ constraints: { collection: 'benchmark', status: 'AISLE benchmark', environment: 'Simulation', label: 'Safe completion', value: 'ΔE₀₀ ≤ 1 · zero violations' },
+ robustness: { collection: 'benchmark', status: 'AISLE benchmark', environment: 'Physical experiments', label: 'Resin target', value: '500 ± 10 μL' },
+ spectral: { collection: 'benchmark', status: 'AISLE benchmark', environment: 'Measured spectra + library queries', label: 'Matching target', value: 'RMSE ≤ 0.100' },
+ solid: { collection: 'psi', status: 'PSI-Bench', environment: 'Historical experimental records', label: 'Outputs', value: 'Conductivity, XRD group, grade' },
+ 'quantum-dot': { collection: 'proposed', status: 'Proposed task', environment: 'Measured-data replay', label: 'Target', value: 'Fluorescence at 600 nm' },
+ 'buchwald-hartwig': { collection: 'proposed', status: 'Proposed task', environment: 'Measured-data replay', label: 'Budget', value: '4 experimental queries' },
+};
+taskEntries.forEach((task, index) => Object.assign(task, catalogueFacts[task.id], { number: String(index + 1).padStart(2, '0') }));
 const steps = [
  {start:0,end:0,nav:'Overview',title:'From a target to the next experiment',copy:'Follow the model from a fixed target through the experiment and back to its next decision.'},
  {start:0,end:6.1,nav:'Propose',title:'Choose a formulation',copy:'The model selects volumes of A–D and sends formulation 01 to the liquid handler.'},
@@ -59,9 +70,9 @@ function taskFeatureMarkup() {
  const options = taskEntries.map(task => `<option value="${task.id}" data-href="${task.href}"${task.id === 'spectral' ? ' selected' : ''}>${task.title}</option>`).join('');
  return `<section class="task-map-feature" id="featured-case" aria-labelledby="featured-title">
    <div class="task-map-feature-picker">
-     <label for="feature-task">Featured task</label>
+     <label for="feature-task">Explore a workflow</label>
      <select id="feature-task" data-map-chooser>${options}</select>
-     <a class="small-link" data-feature-detail href="spectral-inference.html">Full case ↗</a>
+     <a class="small-link" data-feature-detail href="spectral-inference.html">View task details <span aria-hidden="true">↗</span></a>
    </div>
    <div class="section-heading"><h2 id="featured-title" data-feature-heading>Infer a hidden chemical transition.</h2></div>
    <div data-feature-map></div>
@@ -73,42 +84,55 @@ function taskTags(task) {
 }
 
 function renderCards() {
- return taskEntries.map(task => `<a class="task-card"${task.cardId ? ` id="${task.cardId}"` : ''} href="${task.href}">
-   <div class="card-art"><img src="assets/${task.poster}" alt="" loading="lazy" width="760" height="475"><span class="cover-source">${task.media}</span></div>
+ return taskEntries.map(task => `<article class="task-card" id="task-${task.id}" data-task-entry="${task.id}" data-collection="${task.collection}" aria-labelledby="title-${task.id}">
+   <div class="card-art"><img src="assets/${task.poster}" alt="" loading="lazy" decoding="async" width="760" height="475"><span class="card-number">TASK ${task.number}</span></div>
    <div class="card-content">
-     <div class="card-title-row"><h3>${task.title}</h3><span class="card-arrow" aria-hidden="true">↗</span></div>
+     <div class="card-status-row"><span class="task-status">${task.status}</span><span class="card-previewing" hidden>In preview</span></div>
+     <div class="card-title-row"><h3 id="title-${task.id}"><a class="task-title-link" href="${task.href}">${task.title}</a></h3></div>
      <p>${task.description}</p>
+     <dl class="task-fact"><dt>${task.label}</dt><dd>${task.value}</dd></dl>
      ${taskTags(task)}
+     <div class="card-footer"><button type="button" class="card-preview" data-preview-task="${task.id}" aria-label="Preview ${task.title} workflow"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.5 12 8l-7 4.5z"/></svg>Preview workflow</button><span class="card-detail" aria-hidden="true">View task ↗</span></div>
    </div>
- </a>`).join('');
+ </article>`).join('');
 }
 
 function renderTaskList() {
- return `<div class="task-list">${taskEntries.map((task, index) => `<a class="list-row" href="${task.href}">
-   <span class="list-number" aria-hidden="true">${String(index + 1).padStart(2, '0')}</span>
-   <div class="list-main"><strong>${task.title}</strong><p>${task.description}</p>${taskTags(task)}</div>
-   <span class="list-media">${task.media}</span>
+ return `<div class="task-list">${taskEntries.map(task => `<a class="list-row" href="${task.href}" data-task-entry="${task.id}" data-collection="${task.collection}">
+   <span class="list-number" aria-hidden="true">${task.number}</span>
+   <div class="list-main"><span class="task-status">${task.status}</span><strong>${task.title}</strong><p>${task.description}</p><span class="list-environment">${task.environment}</span></div>
+   <span class="list-fact"><small>${task.label}</small>${task.value}</span>
    <span class="list-arrow" aria-hidden="true">↗</span>
  </a>`).join('')}</div>`;
 }
 
-const catalog = `<main class="wrap">
+const catalog = `<main class="wrap catalogue-main">
  <section class="catalog-intro" aria-labelledby="catalog-title">
-   <div><h1 id="catalog-title" class="catalog-title">Explore <em>scientific tasks.</em></h1><p>Explore experimental workflows and see how model predictions are evaluated.</p></div>
-   <a class="small-link" href="../tasks.html#task-protocols">Protocols &amp; scoring ↗</a>
+   <div><div class="catalog-eyebrow">THE AISLE TASK LIBRARY <span>${taskEntries.length} tasks</span></div><h1 id="catalog-title" class="catalog-title">Explore <em>scientific tasks.</em></h1><p>From a scientific question to experimental feedback.<br>Explore the workflows, decisions and criteria behind each task.</p></div>
+   <div class="catalog-intro-links"><a class="catalog-browse" href="../tasks.html#task-library">Browse all tasks <span aria-hidden="true">↓</span></a><a class="small-link" href="../tasks.html#task-protocols">Protocols &amp; scoring ↗</a></div>
  </section>
- <div class="view-tabs" role="tablist" aria-label="Task browsing mode">
-   <button id="visual-tab" role="tab" aria-selected="true" aria-controls="visual-panel">Task cards</button>
-   <button id="list-tab" role="tab" aria-selected="false" aria-controls="list-panel" tabindex="-1">All tasks <span class="tab-count">${taskEntries.length}</span></button>
- </div>
- <section id="visual-panel" role="tabpanel" aria-labelledby="visual-tab">
-   ${taskFeatureMarkup()}
-   <section class="catalog-section" aria-labelledby="all-card-title">
-     <div class="catalog-head"><h2 id="all-card-title">Explore the tasks</h2></div>
-     <div class="card-grid">${renderCards()}</div>
-   </section>
+ ${taskFeatureMarkup()}
+ <section class="catalog-section" id="task-library" aria-labelledby="all-card-title">
+   <div class="catalog-head"><div><h2 id="all-card-title">Find your next scientific challenge.</h2><p>Browse the benchmark, explore PSI-Bench or discover proposed tasks.</p></div><span id="task-result-count" role="status" aria-live="polite" aria-atomic="true">${taskEntries.length} tasks</span></div>
+   <div class="catalog-toolbar">
+     <div class="task-filters" role="group" aria-label="Filter tasks by collection">
+       <button type="button" data-task-filter="all" aria-pressed="true">All tasks <span>7</span></button>
+       <button type="button" data-task-filter="benchmark" aria-pressed="false">AISLE benchmark <span>4</span></button>
+       <button type="button" data-task-filter="psi" aria-pressed="false">PSI-Bench <span>1</span></button>
+       <button type="button" data-task-filter="proposed" aria-pressed="false">Proposed <span>2</span></button>
+     </div>
+     <div class="catalog-tools"><label class="task-search"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4 4"/></svg><input id="task-search" type="search" placeholder="Search tasks…" aria-label="Search tasks" autocomplete="off" maxlength="160"></label>
+       <div class="view-tabs" role="tablist" aria-label="Task browsing mode">
+         <button type="button" id="visual-tab" role="tab" aria-selected="true" aria-controls="visual-panel">Cards</button>
+         <button type="button" id="list-tab" role="tab" aria-selected="false" aria-controls="list-panel" tabindex="-1">List</button>
+       </div>
+     </div>
+   </div>
+   <section id="visual-panel" role="tabpanel" aria-labelledby="visual-tab"><div class="card-grid">${renderCards()}</div></section>
+   <section id="list-panel" role="tabpanel" aria-labelledby="list-tab" hidden>${renderTaskList()}</section>
+   <div class="catalog-empty" id="task-empty" hidden><h3>No tasks found</h3><p>Try a different keyword or browse all seven tasks.</p><button type="button" id="clear-task-filters">Clear search &amp; filters</button></div>
+   <p class="catalog-footnote">Proposed tasks are workflow proposals and are not included in AISLE benchmark scores.</p>
  </section>
- <section id="list-panel" role="tabpanel" aria-labelledby="list-tab" hidden>${renderTaskList()}</section>
 </main>`;
 const detail = '<main class="wrap"><section class="detail-intro"><a class="back-link" href="../tasks.html#task-cards">← Back to task cards</a><h1 class="detail-title">Colour matching</h1></section><section data-task-map="colour" aria-label="Colour-matching task map"></section><details class="task-map-extra"><summary>Interactive workflow</summary>'+caseMarkup()+'</details></main>';
 function videoTaskMarkup() {
@@ -246,9 +270,58 @@ film.addEventListener('error',()=>document.getElementById('media-error').hidden=
 
 if(document.body.dataset.page==='catalog'){
  const tabs=[document.getElementById('visual-tab'),document.getElementById('list-tab')];
- function switchView(tab){
+ const search=document.getElementById('task-search');
+ const filterButtons=[...document.querySelectorAll('[data-task-filter]')];
+ const chooser=document.querySelector('[data-map-chooser]');
+ // Embedded and standalone catalogues share the same bookmarkable browsing state.
+ let stateWindow=window;
+ if(embedded){try{if(window.parent.location.origin===location.origin)stateWindow=window.parent;}catch{}}
+ const initial=new URL(stateWindow.location.href).searchParams;
+ let collection=filterButtons.some(button=>button.dataset.taskFilter===initial.get('collection'))?initial.get('collection'):'all';
+ let selected=taskEntries.some(task=>task.id===initial.get('task'))?initial.get('task'):'spectral';
+ chooser.value=selected;
+ search.value=(initial.get('q')||'').slice(0,160);
+ const normalize=value=>value.normalize('NFKC').toLowerCase().replace(/[–—-]/g,' ');
+ const searchable=new Map(taskEntries.map(task=>[task.id,normalize([task.title,task.description,...task.tags,task.status,task.environment,task.label,task.value].join(' '))]));
+ let restoringHistory=false;
+ function saveState(){
+  const url=new URL(stateWindow.location.href);
+  if(!restoringHistory){
+   for(const [key,value] of Object.entries({task:selected==='spectral'?'':selected,collection:collection==='all'?'':collection,q:search.value.trim(),view:tabs[1].getAttribute('aria-selected')==='true'?'list':''})){
+    if(value)url.searchParams.set(key,value);else url.searchParams.delete(key);
+   }
+   stateWindow.history.replaceState(stateWindow.history.state,'',url);
+  }
+  app.querySelectorAll('a[href]').forEach(link=>{
+   const destination=new URL(link.href);
+   if(destination.origin===url.origin&&destination.pathname.endsWith('/tasks.html')&&destination.hash){
+    destination.search=url.search;
+    if(!embedded){destination.searchParams.delete('embed');destination.searchParams.delete('v');}
+    link.href=destination.href;
+   }
+  });
+ }
+ function markPreview(){
+  document.querySelectorAll('.task-card').forEach(card=>{
+   const active=card.dataset.taskEntry===selected;
+   card.classList.toggle('is-previewed',active);
+   card.querySelector('.card-previewing').hidden=!active;
+   card.querySelector('[data-preview-task]').setAttribute('aria-pressed',String(active));
+  });
+ }
+ function filterTasks(persist=true){
+  const terms=normalize(search.value.trim()).split(/\s+/).filter(Boolean);
+  const matches=new Set(taskEntries.filter(task=>(collection==='all'||task.collection===collection)&&terms.every(term=>searchable.get(task.id).includes(term))).map(task=>task.id));
+  document.querySelectorAll('[data-task-entry]').forEach(entry=>entry.hidden=!matches.has(entry.dataset.taskEntry));
+  filterButtons.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.taskFilter===collection)));
+  document.getElementById('task-result-count').textContent=`${matches.size} ${matches.size===1?'task':'tasks'}${matches.size===taskEntries.length?'':` of ${taskEntries.length}`}`;
+  document.getElementById('task-empty').hidden=matches.size>0;
+  if(persist)saveState();
+ }
+ function switchView(tab,persist=true){
   tabs.forEach(t=>{const selected=t===tab;t.setAttribute('aria-selected',String(selected));t.tabIndex=selected?0:-1;document.getElementById(t.getAttribute('aria-controls')).hidden=!selected});
   document.dispatchEvent(new CustomEvent('catalog-view-change',{detail:{visual:tab===tabs[0]}}));
+  if(persist)saveState();
  }
  tabs.forEach((tab,i)=>{
   tab.addEventListener('click',()=>switchView(tab));
@@ -258,4 +331,33 @@ if(document.body.dataset.page==='catalog'){
    }
   });
  });
+ search.addEventListener('input',()=>filterTasks());
+ filterButtons.forEach(button=>button.addEventListener('click',()=>{collection=button.dataset.taskFilter;filterTasks();}));
+ document.getElementById('clear-task-filters').addEventListener('click',()=>{collection='all';search.value='';filterTasks();search.focus();});
+ document.querySelectorAll('[data-preview-task]').forEach(button=>button.addEventListener('click',()=>{
+  chooser.value=button.dataset.previewTask;
+  chooser.dispatchEvent(new Event('change'));
+  const feature=document.getElementById('featured-case');
+  feature.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+  const heading=document.getElementById('featured-title');
+  heading.tabIndex=-1;heading.focus({preventScroll:true});
+ }));
+ document.addEventListener('catalog-feature-change',event=>{selected=event.detail.task;markPreview();saveState();});
+ document.addEventListener('catalog-reveal-task',()=>{collection='all';search.value='';switchView(tabs[0],false);filterTasks();});
+ stateWindow.addEventListener('popstate',()=>{
+  const params=new URL(stateWindow.location.href).searchParams;
+  restoringHistory=true;
+  try{
+   collection=filterButtons.some(button=>button.dataset.taskFilter===params.get('collection'))?params.get('collection'):'all';
+   const nextTask=taskEntries.some(task=>task.id===params.get('task'))?params.get('task'):'spectral';
+   search.value=(params.get('q')||'').slice(0,160);
+   switchView(params.get('view')==='list'?tabs[1]:tabs[0],false);
+   filterTasks(false);
+   if(chooser.value!==nextTask){chooser.value=nextTask;chooser.dispatchEvent(new Event('change'));}
+   selected=nextTask;markPreview();saveState();
+  }finally{restoringHistory=false;}
+ });
+ switchView(initial.get('view')==='list'?tabs[1]:tabs[0],false);
+ filterTasks(false);
+ markPreview();
 }

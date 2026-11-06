@@ -116,6 +116,13 @@
     const whole = Math.floor(seconds);
     return [Math.floor(whole / 60), whole % 60].map(part => String(part).padStart(2, '0')).join(':');
   }
+  function spokenTime(seconds) {
+    const whole = Math.floor(seconds);
+    const minutes = Math.floor(whole / 60);
+    const remainder = whole % 60;
+    return (minutes ? `${minutes} minute${minutes === 1 ? '' : 's'} ` : '')
+      + `${remainder} second${remainder === 1 ? '' : 's'}`;
+  }
 
   function render(host, key, detailUrl = '') {
     const task = graphs[key];
@@ -157,6 +164,9 @@
               </div>
               <div class="task-map-screen">
                 <video src="assets/workflows/${task.video}" poster="assets/${task.poster}" controls playsinline preload="none" aria-label="${task.heading}"></video>
+              </div>
+              <div class="task-map-controls">
+                <input class="task-map-seek" data-map-seek type="range" min="0" max="${task.duration}" step="0.1" value="0" aria-label="Video position">
                 <div class="task-map-actions">
                   <button type="button" data-map-replay aria-label="Replay from beginning">${icon('replay')}<span>Replay</span></button>
                   <button type="button" data-map-expand aria-label="Expand video">${icon('expand')}<span>Expand</span></button>
@@ -199,38 +209,60 @@
     const play = host.querySelector('.task-map-play');
     const playLabel = host.querySelector('[data-map-play-label]');
     const time = host.querySelector('[data-map-clock]');
+    const scrub = host.querySelector('[data-map-seek]');
     const playIcon = host.querySelector('[data-map-play-icon]');
     const pauseIcon = host.querySelector('[data-map-pause-icon]');
     const expand = host.querySelector('[data-map-expand]');
     const error = host.querySelector('.task-map-error');
     let pendingSeek = null;
+    function duration() {
+      return Number.isFinite(video.duration) && video.duration > 0 ? video.duration : task.duration;
+    }
     function sync() {
-      const position = pendingSeek ?? video.currentTime;
-      const duration = Number.isFinite(video.duration) ? video.duration : task.duration;
-      time.textContent = clock(position) + ' / ' + clock(duration);
-      play.style.setProperty('--played', Math.min(position / duration, 1) * 360 + 'deg');
+      const total = duration();
+      const position = Math.min(pendingSeek ?? video.currentTime, total);
+      time.textContent = clock(position) + ' / ' + clock(total);
+      scrub.max = total;
+      scrub.value = position;
+      scrub.setAttribute('aria-valuetext', `${spokenTime(position)} of ${spokenTime(total)}`);
+      play.style.setProperty('--played', Math.min(position / total, 1) * 360 + 'deg');
       playLabel.textContent = video.paused ? video.ended ? 'Replay case' : 'Play case' : 'Pause';
       playIcon.hidden = !video.paused;
       pauseIcon.hidden = video.paused;
       select(Math.max(0, task.nodes.findLastIndex(node => node[3] <= position + .015)));
     }
     function seek(position) {
-      if (video.readyState) {
-        video.currentTime = position;
-      } else {
-        if (pendingSeek === null) video.load();
-        pendingSeek = position;
-      }
+      position = Math.max(0, Math.min(position, duration()));
+      const needsLoad = pendingSeek === null && !video.readyState;
+      pendingSeek = position;
+      video.preload = 'auto';
+      if (needsLoad) video.load();
+      applyPendingSeek();
       sync();
     }
-    video.addEventListener('loadedmetadata', () => {
-      if (pendingSeek !== null) {
-        video.currentTime = pendingSeek;
+    function applyPendingSeek() {
+      if (pendingSeek === null || !video.readyState) return;
+      const position = Math.min(pendingSeek, duration());
+      // Metadata can arrive before a server without byte ranges has supplied
+      // the requested frame. Keep the chosen position until it is seekable.
+      const available = position === 0 || Array.from({ length: video.seekable.length }, (_, i) =>
+        position >= video.seekable.start(i) && position <= video.seekable.end(i)).some(Boolean);
+      if (available) video.currentTime = position;
+      if (available && Math.abs(video.currentTime - position) < .05) pendingSeek = null;
+    }
+    for (const event of ['loadedmetadata', 'loadeddata', 'progress', 'canplay', 'canplaythrough']) {
+      video.addEventListener(event, () => {
+        applyPendingSeek();
+        sync();
+      });
+    }
+    video.addEventListener('seeked', () => {
+      if (pendingSeek !== null && Math.abs(video.currentTime - pendingSeek) < .05) {
         pendingSeek = null;
       }
       sync();
     });
-    for (const event of ['timeupdate', 'seeked', 'play', 'pause', 'ended']) {
+    for (const event of ['durationchange', 'timeupdate', 'seeked', 'play', 'pause', 'ended']) {
       video.addEventListener(event, sync);
     }
     function fallback() {
@@ -253,6 +285,7 @@
       start();
     });
     host.querySelector('[data-map-replay]').addEventListener('click', () => { seek(0); start(); });
+    scrub.addEventListener('input', () => seek(Number(scrub.value)));
     buttons.forEach((button, index) => button.addEventListener('click', () => seek(task.nodes[index][3])));
     expand.hidden = !document.fullscreenEnabled;
     expand.addEventListener('click', async () => {
@@ -293,11 +326,9 @@
         const protocol = host.querySelector('[data-map-protocol]');
         if (protocol) protocol.target = '_top';
       }
+      document.dispatchEvent(new CustomEvent('catalog-feature-change', { detail: { task: option.value } }));
     }
     chooser.addEventListener('change', show);
-    document.addEventListener('catalog-view-change', event => {
-      if (!event.detail.visual) host.querySelector('video')?.pause();
-    });
     show();
   });
   document.addEventListener('visibilitychange', () => {
