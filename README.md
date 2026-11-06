@@ -8,7 +8,7 @@ The `contribution-workflow` branch contains the interactive task catalogue and
 the local contributor/reviewer workflow. It does not deploy over the live website.
 
 ```sh
-git clone --branch contribution-workflow --single-branch https://github.com/nlz25/AISLE.git
+git clone --branch contribution-workflow --single-branch https://github.com/yangsen-hub-dot/AISLE.git
 cd AISLE
 python -X utf8 scripts/build_site.py
 python -m http.server 4173 --bind 127.0.0.1 --directory dist
@@ -25,6 +25,9 @@ switching between them so they share the same local records.
 Edit source files and run the build command again, then refresh the page.
 Create a personal branch with `git switch -c your-change` before making changes.
 Collaborators with write access can push that branch; others can work in a fork.
+Open collaboration pull requests against `yangsen-hub-dot/AISLE` with
+`contribution-workflow` as the base branch. The upstream project is
+`nlz25/AISLE`; this fork keeps the local development work separate.
 
 ### Where to edit
 
