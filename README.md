@@ -2,6 +2,45 @@
 
 [aisle.science](https://aisle.science/) presents the experimental evaluation of AI scientists. The site is English only, with an interactive research network, experimental films, fixed-cohort leaderboards and task protocols.
 
+## Clone this development version
+
+The `contribution-workflow` branch contains the interactive task catalogue and
+the local contributor/reviewer workflow. It does not deploy over the live website.
+
+```sh
+git clone --branch contribution-workflow --single-branch https://github.com/nlz25/AISLE.git
+cd AISLE
+python -X utf8 scripts/build_site.py
+python -m http.server 4173 --bind 127.0.0.1 --directory dist
+```
+
+Use Python 3.12 or later. On macOS/Linux, replace `python` with `python3` if needed;
+on Windows, `py -3 -X utf8 scripts/build_site.py` also works. A normal build needs
+only Python's standard library, with no database, npm install, or API credentials.
+
+Open `http://127.0.0.1:4173/index.html` manually. The new views are
+`/contribute.html` and `/review.html`. Keep the same browser, hostname and port when
+switching between them so they share the same local records.
+
+Edit source files and run the build command again, then refresh the page.
+Create a personal branch with `git switch -c your-change` before making changes.
+Collaborators with write access can push that branch; others can work in a fork.
+
+### Where to edit
+
+- Page structure and guidance: `src/sitegen/pages/contribute.py`.
+- Form fields and review checklists: `src/scripts/contribution-fields.js`.
+- Submission state transitions: `src/scripts/contribution-model.js`.
+- Interactive forms, queue and decisions: `src/scripts/contribution.js`.
+- Local persistence and export: `src/scripts/contribution-store.js`.
+- Workflow styling: `src/styles/contribution.css`.
+- Interactive task catalogue and its assets: `public/task-cards/`.
+
+The workflow ends at acceptance for later integration. Each collaborator gets
+their own browser-local data; cloning the repository does not share submissions
+or experimental measurements. See the [workflow guide](docs/contribution-workflow.md)
+for the future server boundary.
+
 ## Develop
 
 Requires Python **3.12+**. Node 22+ is used for JavaScript syntax checks. The website has no client framework; its optional entrance globe uses a locally bundled Globe.gl / Three.js runtime.
@@ -33,7 +72,7 @@ the entrance's loading and rendering budgets.
 ```text
 src/
   sitegen/
-    pages/          # home, leaderboard and tasks
+    pages/          # home, leaderboard, tasks, contribute and review
     components/     # layout, portal, map, result tables, institutions
     context.py      # build paths, study data and HTML escaping
   styles/           # base components, dark theme, entrance, research network
@@ -71,5 +110,25 @@ Push to `main` to run `.github/workflows/pages.yml`: build → validate → uplo
 - [Entrance artwork](docs/portal-art.md)
 - [Portal click counter](docs/counter.md)
 - [Roadmap](docs/roadmap.md)
+- [Local contribution and review workflow](docs/contribution-workflow.md)
+
+## Local contribution workspace
+
+Open `contribute.html` from the site navigation to prepare a short proposal, then
+a complete task package after proposal approval. `review.html` provides the local
+review queue, requests for changes, scientific/technical sign-off and acceptance
+for later integration. No experiment execution or measurement ingestion is connected.
+
+Records and attachment bytes are saved in IndexedDB in the same browser and origin.
+This is a local workflow prototype, not authenticated multi-user review. Use the
+explicit package export to retain a copy of all revisions and their materials.
+Switching port/browser or clearing site data starts a separate local workspace.
+
+The controller and persistence check runs without opening a browser:
+
+```sh
+npm install --prefix .qa --no-save --package-lock=false --ignore-scripts jsdom fake-indexeddb
+node scripts/check_contribution_ui.mjs
+```
 
 Scores describe an evaluated research cohort, not a live ranking of current models. The research network's four regions and supplied films do not describe coverage of the scored benchmark. Original logos and laboratory footage retain their respective owners' rights.

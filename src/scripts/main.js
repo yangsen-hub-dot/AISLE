@@ -51,4 +51,35 @@ if (entrance) {
   reduced.addEventListener('change', scheduleGlobe);
 } else if (document.getElementById('results-data')) {
   await import('./research.js?v=__ASSET_VERSION__');
+} else {
+  const catalogueFrame = document.getElementById('task-catalogue-frame');
+  if (catalogueFrame) {
+    let observer;
+    let pendingAnchor = location.hash;
+    const scrollToCatalogueAnchor = () => {
+      if (!['#featured-case', '#task-quantum-dot'].includes(pendingAnchor)) return;
+      const target = catalogueFrame.contentDocument?.getElementById(pendingAnchor.slice(1));
+      if (target?.getClientRects().length && catalogueFrame.getClientRects().length) {
+        target.scrollIntoView({ block: 'start' });
+        pendingAnchor = '';
+      }
+    };
+    const fitCatalogue = () => {
+      observer?.disconnect();
+      const catalogue = catalogueFrame.contentDocument?.getElementById('app');
+      if (!catalogue?.firstElementChild) return;
+      observer = new ResizeObserver(() => {
+        const height = Math.ceil(catalogue.getBoundingClientRect().height);
+        if (height > 0) catalogueFrame.style.height = `${height}px`;
+        scrollToCatalogueAnchor();
+      });
+      observer.observe(catalogue);
+    };
+    window.addEventListener('hashchange', () => {
+      pendingAnchor = location.hash;
+      scrollToCatalogueAnchor();
+    });
+    catalogueFrame.addEventListener('load', fitCatalogue);
+    fitCatalogue();
+  }
 }

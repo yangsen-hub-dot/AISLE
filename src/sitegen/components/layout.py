@@ -10,6 +10,7 @@ def header(page):
         ("index.html", "Home"),
         ("leaderboard.html", "Leaderboard"),
         ("tasks.html", "Tasks"),
+        ("contribute.html", "Contribute"),
         ("#join" if page == "index.html" else "index.html#join", "Join us"),
     ]
     nav = "".join(
@@ -40,6 +41,13 @@ def results_data():
 def shell(page, title, description, body, version):
     url = f"https://aisle.science/{page}"
     portal = page == "index.html"
+    body_class = ' class="tasks-page"' if page == "tasks.html" else ""
+    contribution = page in {"contribute.html", "review.html"}
+    contribution_assets = (
+        f'<link rel="stylesheet" href="assets/css/contribution.css?v={version}">'
+        f'<script type="module" src="assets/js/contribution.js?v={version}"></script>'
+        if contribution else ""
+    )
     portal_style = (
         f'<link rel="stylesheet" href="assets/css/portal.css?v={version}"><link rel="stylesheet" href="assets/css/network.css?v={version}">'
         if portal
@@ -68,7 +76,8 @@ def shell(page, title, description, body, version):
   {preload}
   <link rel="stylesheet" href="assets/css/site.css?v={version}">
   {portal_style}
+  {contribution_assets}
   <script type="module" src="assets/js/main.js?v={version}"></script>
 </head>
-<body>{header(page)}{body}{results_data() if page != "tasks.html" else ""}{footer()}</body>
+<body{body_class}>{header(page)}{body}{results_data() if page in {"index.html", "leaderboard.html"} else ""}{footer()}</body>
 </html>'''

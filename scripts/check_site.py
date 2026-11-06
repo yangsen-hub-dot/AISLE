@@ -166,8 +166,8 @@ for path in [
         errors.append(f"{path}: internal source detail in public page")
 
 # Validate the new deployment boundary and references in compiled CSS / modules.
-if len(pages) != 3 or (ROOT / "zh").exists():
-    errors.append("Expected exactly three English pages")
+if len(pages) != 5 or (ROOT / "zh").exists():
+    errors.append("Expected exactly five English pages")
 for path in [*(ROOT / "assets/css").glob("*.css"), *(ROOT / "assets/js").glob("*.js")]:
     content = path.read_text()
     refs = (

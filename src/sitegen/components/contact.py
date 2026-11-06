@@ -16,6 +16,7 @@ def contact():
         <p>Contribute experiments, connect your lab, or collaborate on AI evaluation.</p>
       </div>
       <div class="join-actions">
+        <a class="join-email-button" href="contribute.html">Contribute a task</a>
         <a class="join-email-button" href="{mailto}">Email us</a>
         <a class="join-email-address" href="{mailto}">{CONTACT_EMAIL}</a>
       </div>

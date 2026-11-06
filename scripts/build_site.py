@@ -14,6 +14,7 @@ from sitegen.components.hand import HAND_ATLAS
 from sitegen.pages.home import home
 from sitegen.pages.leaderboard import leaderboard
 from sitegen.pages.tasks import tasks
+from sitegen.pages.contribute import contribute, review
 
 
 def main():
@@ -28,6 +29,8 @@ def main():
     )
     version = hashlib.sha256(b"".join(p.read_bytes() for p in sources)).hexdigest()[:12]
     if DIST.exists():
+        if DIST.resolve() != (ROOT / "dist").resolve() or DIST.is_symlink():
+            raise RuntimeError("Refusing to clean an output directory outside this project.")
         shutil.rmtree(DIST)
     shutil.copytree(PUBLIC, DIST)
     css = DIST / "assets/css"
@@ -41,6 +44,7 @@ def main():
     )
     shutil.copy2(ROOT / "src/styles/portal.css", css / "portal.css")
     shutil.copy2(ROOT / "src/styles/network.css", css / "network.css")
+    shutil.copy2(ROOT / "src/styles/contribution.css", css / "contribution.css")
     for source in (ROOT / "src/scripts").glob("*.js"):
         (js / source.name).write_text(
             source.read_text().replace("__ASSET_VERSION__", version)
@@ -50,14 +54,16 @@ def main():
         ("index.html", "AI Scientists' Last Exam", home),
         ("leaderboard.html", "Experimental results", leaderboard),
         ("tasks.html", "Tasks", tasks),
+        ("contribute.html", "Contribute a scientific task", contribute),
+        ("review.html", "Task review workspace", review),
     ]:
         (DIST / filename).write_text(
             shell(filename, title, description, render(), version)
         )
     (DIST / "build.json").write_text(
-        json.dumps({"asset_version": version, "pages": 3}) + "\n"
+        json.dumps({"asset_version": version, "pages": 5}) + "\n"
     )
-    print(f"Built 3 English pages into {DIST}; assets {version}.")
+    print(f"Built 5 English pages into {DIST}; assets {version}.")
 
 
 if __name__ == "__main__":

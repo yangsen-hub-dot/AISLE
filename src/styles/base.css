@@ -1990,3 +1990,22 @@ button {
     margin-left: auto;
   }
 }
+
+/* Keep protocol permalinks available without placing the old page beneath the catalogue. */
+.task-protocols:not(:target, :has(:target)),
+.tasks-page:has(.task-protocols:target, .task-protocols :target) .task-catalogue {
+  display: none;
+}
+
+.task-catalogue,
+#task-protocols {
+  scroll-margin-top: 110px;
+}
+
+.task-catalogue iframe {
+  display: block;
+  width: 100%;
+  height: 75vh;
+  border: 0;
+  background: var(--paper);
+}
