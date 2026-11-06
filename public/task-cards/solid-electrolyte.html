@@ -39,16 +39,21 @@ h1 { margin: 12px 0 24px; font-weight: 600; }
 .range-box input { accent-color: #263d55; }
 .steps button[aria-current=true] { color: #87504a; }
 </style>
+  <link rel="stylesheet" href="assets/task-graphs.css?v=task-graphs-1">
+  <script src="assets/task-graphs.js?v=task-graphs-1" defer></script>
 </head>
 <body><main>
 <div class="eyebrow"><a href="../tasks.html#task-cards" style="color:inherit;text-decoration:underline;text-underline-offset:3px">← AISLE task cards</a></div>
 <h1>Can a model predict <em>solid electrolyte performance?</em></h1>
+<section data-task-map="solid" aria-label="Solid electrolyte task map"></section>
+<details class="task-map-extra"><summary>Interactive 3D evaluation</summary>
 <div class="frame">
 <div class="body"><div class="stage"><canvas id="world" aria-label="Three-dimensional evaluation scene"></canvas>
 <div class="scene-head"><strong id="scene-title"></strong></div>
 <div class="caption"><div class="legend" id="legend"><span><i style="background:#866cba"></i>Li</span><span><i style="background:#c87552"></i>P</span><span><i style="background:#d6aa40"></i>S</span><span><i style="background:#539b89"></i>Cl</span></div><div class="legend" id="residual-legend" hidden><span><i style="background:#8160ba"></i>Predicted</span><span><i style="background:#4b9a83"></i>Measured</span><span><i style="background:#c39767"></i>Highlighted residual</span></div><span id="scene-note"></span></div>
 </div><aside class="aside" aria-live="polite"><h2 id="heading"></h2><p id="summary"></p><ul class="facts" id="facts"></ul><button class="btn" type="button" id="inspect" aria-pressed="false" hidden>Inspect paired residuals ↗</button><div class="note" id="note"></div></aside></div>
 <div class="controls"><button class="btn" id="play" type="button" aria-label="Play evaluation stages">▶ Play</button><div class="range-box"><input type="range" id="scrub" min="0" max="4" step="0.01" value="0" aria-label="Evaluation stage"><div class="steps" id="steps"></div></div><span class="counter" id="counter"></span></div></div>
+</details>
 <footer><span>Illustrative evaluation workflow · no benchmark scores shown</span><span><a href="https://doi.org/10.1002/anie.200703900">Crystal reference</a> · ICSD 418490 · calculated Cu Kα diffraction</span></footer>
 </main>
 <script type="module">

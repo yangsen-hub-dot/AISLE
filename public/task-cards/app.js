@@ -4,11 +4,11 @@ const embedded = document.body.dataset.page === 'catalog'
   && new URLSearchParams(location.search).has('embed');
 const isVideoTask = document.body.dataset.page === 'video-task';
 const taskEntries = [
- {title:'Experimental optimisation',description:'Propose formulations and use experimental feedback to match a target colour.',tags:["Colour matching", "4D / 8D"],media:"SUZHOU · EXPERIMENT FILM",href:'color-matching.html',poster:'suzhou-film-card.webp'},
+ {id:'colour',title:'Experimental optimisation',description:'Propose formulations and use experimental feedback to match a target colour.',tags:["Colour matching", "4D / 8D"],media:"SUZHOU · EXPERIMENT FILM",href:'color-matching.html',poster:'suzhou-film-card.webp'},
  {"id":"constraints","title":"Constraint adherence","description":"Match a target colour while keeping every executed experiment outside the forbidden band.","tags":["Colour matching", "Constraints"],"media":"INTERACTIVE 3D","href":"constraint-adherence.html","poster":"constraint-adherence-v19.webp","caseTitle":"Can the agent match a colour safely?","videoTitle":"Safety-constrained colour matching","caption":"GPT-5.5 source case · Illustrative replay","note":"Illustrative replay based on the supplied presentation. Colour-error values are approximately digitized; recipes, actions and the separate spectrum example are illustrative. The five equal model icons represent examples evaluated separately, not participants in a joint run. Visual review pending.","official":"../tasks.html#safety","scene":"assets/interactive/constraints/src/index.html?render","duration":36,"stages":[{"label":"Overview","time":0},{"label":"Experiment","time":4.2},{"label":"Observe","time":5.7},{"label":"Violation","time":15.5},{"label":"Safe match","time":22.5},{"label":"Verdict","time":34}]},
  {"id":"robustness","title":"Adaptive robustness","description":"Use physical measurements to adapt to hidden drift and changing transfer conditions.","tags":["Hidden drift", "Measured recovery"],"media":"INTERACTIVE 3D","href":"adaptive-robustness.html","poster":"adaptive-robustness-v20.webp","film":"../assets/experiments/bears.mp4","caseTitle":"Same command. Different result.","videoTitle":"Hidden pipetting drift and measured recovery","caption":"Sequential measured samples · Illustrative drift","note":"Illustrative one-channel example: commands 50 / 50 / 62.5 µL, delivered volumes 50 / 40 / 50 µL and schematic optical signals 100 / 80 / 100%. Delivered volume is viewer explanation, not agent telemetry. Recovery against the trigger-round baseline is distinct from target success. The five model icons are examples evaluated separately; no measured model scores are shown. Visual review pending.","official":"../tasks.html#robustness","scene":"assets/interactive/robustness/src/index.html?render","duration":38,"stages":[{"label":"Overview","time":0},{"label":"Baseline","time":9.4},{"label":"Hidden drift","time":19.4},{"label":"Adapt","time":24},{"label":"Recovery","time":30.4},{"label":"Evaluate","time":36}]},
  {"id":"spectral","title":"Multimodal spectral reasoning","description":"Use spectral observations to guide formulations or infer chemical properties.","tags":["Spectral matching", "pKa inference"],"media":"INTERACTIVE 3D","href":"spectral-inference.html","poster":"spectral-inference-v21.webp","caseTitle":"Infer a hidden chemical transition.","videoTitle":"Spectral pKa inference","caption":"Synthetic spectra · Conditional inference","note":"Synthetic two-state spectra illustrate four measurements within an eight-action budget. The pKa estimate and 95% interval are conditional on known spectral bases and noise, not measured performance on an unknown indicator. The methyl-orange structure is viewer context; its identity is hidden from the agent. The evaluator checks the correct pKa count and maximum error ≤ 0.10. Model icons are examples evaluated separately. Visual review pending.","official":"../tasks.html#multimodal","scene":"assets/interactive/spectral/src/index.html?render","duration":40,"stages":[{"label":"Overview","time":0},{"label":"Select pH","time":2.3},{"label":"Prepare","time":4.1},{"label":"Spectrum","time":8},{"label":"Compare","time":24.4},{"label":"Infer pKa","time":36}]},
- {title:'Solid electrolyte prediction',description:'Predict ionic conductivity, XRD pattern group and product grade from historical experimental records.',tags:["PSI-Bench", "3D evaluation"],media:"INTERACTIVE 3D",href:'solid-electrolyte.html',poster:'solid-electrolyte-card.webp'},
+ {id:'solid',title:'Solid electrolyte prediction',description:'Predict ionic conductivity, XRD pattern group and product grade from historical experimental records.',tags:["PSI-Bench", "3D evaluation"],media:"INTERACTIVE 3D",href:'solid-electrolyte.html',poster:'solid-electrolyte-card.webp'},
  {id:'quantum-dot',cardId:'task-quantum-dot',title:'Quantum Dot Formulation Optimisation',description:'Use measured spectra and a limited query budget to find the strongest fluorescence at 600 nm.',tags:["Experimental optimisation", "48 formulations"],media:"PROPOSED TASK · WORKFLOW ILLUSTRATION",href:'quantum-dot.html',poster:'quantum-dot-workflow-card.webp'},
  {id:'buchwald-hartwig',cardId:'task-buchwald-hartwig',title:'Buchwald–Hartwig Reaction Optimisation',description:'Choose reaction conditions and use measured yield feedback to find a successful C–N coupling within four experiments.',tags:["Experimental optimisation", "4 experiments"],media:"PROPOSED TASK · WORKFLOW ILLUSTRATION",href:'buchwald-hartwig.html',poster:'buchwald-hartwig-workflow-card.webp'}
 ];
@@ -38,7 +38,7 @@ function caseMarkup() {
     <div class="workflow-label"><span class="workflow-target"><i></i>Fixed target</span></div>
     <div class="workflow-frame">
      <img id="workflow-still" src="assets/colour-workflow/stills/0.webp" alt="Illustrated colour-matching workflow, stage 1">
-     <iframe id="workflow" src="assets/colour-workflow/index.html?v=guided-1" title="Illustrated colour-matching workflow" hidden></iframe>
+     <iframe id="workflow" loading="lazy" src="assets/colour-workflow/index.html?v=guided-1" title="Illustrated colour-matching workflow" hidden></iframe>
      <div class="workflow-hotspots">${hotspots}</div>
     </div>
    </div>
@@ -55,17 +55,16 @@ function caseMarkup() {
   </div>
  </div>`;
 }
-function solidFeatureMarkup() {
- return `<section class="case solid-feature" id="featured-case" aria-labelledby="feature-title">
-   <div class="case-top">
-     <h3 id="feature-title">Solid electrolyte prediction</h3>
-     <span class="feature-source">PSI-Bench / Materials science</span>
-     <a class="small-link solid-open" href="solid-electrolyte.html">Full case ↗</a>
+function taskFeatureMarkup() {
+ const options = taskEntries.map(task => `<option value="${task.id}" data-href="${task.href}"${task.id === 'spectral' ? ' selected' : ''}>${task.title}</option>`).join('');
+ return `<section class="task-map-feature" id="featured-case" aria-labelledby="featured-title">
+   <div class="task-map-feature-picker">
+     <label for="feature-task">Featured task</label>
+     <select id="feature-task" data-map-chooser>${options}</select>
+     <a class="small-link" data-feature-detail href="spectral-inference.html">Full case ↗</a>
    </div>
-   <div class="solid-feature-body">
-     <a class="solid-feature-poster" href="solid-electrolyte.html"><img src="assets/solid-electrolyte-card.webp" alt="Solid electrolyte evaluation: crystal structure, model predictions and independent scoring"></a>
-     <iframe id="solid-feature-frame" src="solid-electrolyte.html?featured=1&amp;v=3" title="Interactive solid electrolyte prediction and independent evaluation"></iframe>
-   </div>
+   <div class="section-heading"><h2 id="featured-title" data-feature-heading>Infer a hidden chemical transition.</h2></div>
+   <div data-feature-map></div>
  </section>`;
 }
 
@@ -103,10 +102,7 @@ const catalog = `<main class="wrap">
    <button id="list-tab" role="tab" aria-selected="false" aria-controls="list-panel" tabindex="-1">All tasks <span class="tab-count">${taskEntries.length}</span></button>
  </div>
  <section id="visual-panel" role="tabpanel" aria-labelledby="visual-tab">
-   <section class="featured-section" aria-labelledby="featured-title">
-     <div class="section-heading"><h2 id="featured-title">From crystal structure to verified prediction.</h2></div>
-     ${solidFeatureMarkup()}
-   </section>
+   ${taskFeatureMarkup()}
    <section class="catalog-section" aria-labelledby="all-card-title">
      <div class="catalog-head"><h2 id="all-card-title">Explore the tasks</h2></div>
      <div class="card-grid">${renderCards()}</div>
@@ -114,7 +110,7 @@ const catalog = `<main class="wrap">
  </section>
  <section id="list-panel" role="tabpanel" aria-labelledby="list-tab" hidden>${renderTaskList()}</section>
 </main>`;
-const detail = '<main class="wrap"><section class="detail-intro"><a class="back-link" href="../tasks.html#task-cards">← Back to task cards</a><h1 class="detail-title">Colour matching</h1></section>'+caseMarkup()+'</main>';
+const detail = '<main class="wrap"><section class="detail-intro"><a class="back-link" href="../tasks.html#task-cards">← Back to task cards</a><h1 class="detail-title">Colour matching</h1></section><section data-task-map="colour" aria-label="Colour-matching task map"></section><details class="task-map-extra"><summary>Interactive workflow</summary>'+caseMarkup()+'</details></main>';
 function videoTaskMarkup() {
  const id = document.body.dataset.task || new URLSearchParams(location.search).get('task');
  const task = taskEntries.find(entry => entry.id === id && entry.scene);
