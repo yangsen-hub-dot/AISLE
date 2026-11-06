@@ -81,8 +81,8 @@
 .task-map-node[aria-pressed="true"] .task-map-label, .task-map-node:hover .task-map-label { background: #e0e9df; color: #19394e; }
 .task-map-label-hidden { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .task-map-media { min-width: 0; }
-.task-map-toolbar, .task-map-actions { display: none; }
-.task-map-player.is-enhanced .task-map-toolbar, .task-map-player.is-enhanced .task-map-actions { display: flex; }
+.task-map-toolbar, .task-map-controls { display: none; }
+.task-map-player.is-enhanced .task-map-toolbar, .task-map-player.is-enhanced .task-map-controls { display: flex; }
 .task-map-toolbar { padding: 0 0 9px; }
 .task-map-play {
   display: flex;
@@ -106,16 +106,23 @@
 .task-map-play-text small { color: var(--map-muted); font-size: 11px; font-variant-numeric: tabular-nums; }
 .task-map-screen { position: relative; overflow: hidden; border-radius: 5px; background: var(--map-paper); }
 .task-map-screen video { display: block; width: 100%; aspect-ratio: 8 / 5; object-fit: contain; }
+.task-map-controls { align-items: center; gap: 14px; padding: 9px 0 0; }
+.task-map-seek {
+  display: block;
+  flex: 1;
+  min-width: 50px;
+  width: 100%;
+  height: 36px;
+  margin: 0;
+  accent-color: var(--map-teal);
+  cursor: pointer;
+}
+.task-map-seek:focus-visible { outline: 2px solid var(--map-blue); outline-offset: 3px; border-radius: 4px; }
 .task-map-actions {
-  position: absolute;
-  right: 12px;
-  bottom: 12px;
+  display: flex;
+  flex: none;
   align-items: center;
-  padding: 3px;
   gap: 3px;
-  border-radius: 30px;
-  background: #faf6eef5;
-  box-shadow: 0 2px 10px #263d5516;
 }
 .task-map-actions button {
   display: flex;
@@ -134,9 +141,10 @@
 }
 .task-map-play:hover, .task-map-actions button:hover { background: #e5ebe0; }
 .task-map-player:fullscreen { display: flex; flex-direction: column; background: #101820; }
-.task-map-player:fullscreen .task-map-toolbar { padding: 10px 14px; }
+.task-map-player:fullscreen .task-map-toolbar { flex: none; padding: 10px 14px; }
 .task-map-player:fullscreen .task-map-screen { flex: 1; min-height: 0; background: #101820; }
-.task-map-player:fullscreen video { height: 100%; }
+.task-map-player:fullscreen video { height: 100%; max-height: none; aspect-ratio: auto; }
+.task-map-player:fullscreen .task-map-controls { flex: none; padding: 8px 16px; background: var(--map-paper); }
 .task-map-illustration figure { margin: 0; }
 .task-map-illustration img { display: block; width: 100%; height: auto; }
 .task-map-illustration figcaption { margin-top: 8px; color: var(--map-muted); font-size: 12px; }
@@ -156,17 +164,29 @@
 .task-map-extra > summary { color: #263d55; font-size: 13px; cursor: pointer; padding: 6px 0; }
 .task-map-extra[open] > summary { margin-bottom: 12px; }
 .qd-section-top + .task-map { margin-top: 20px; }
+@media (min-width: 781px) {
+  .task-map-feature .task-map-layout { grid-template-columns: 200px minmax(0, 1fr); }
+  .task-map-feature .task-map-network { height: 300px; }
+  .task-map-feature .task-map-player:not(:fullscreen) video { height: 360px; max-height: 34vw; aspect-ratio: auto; }
+  .task-map-feature .task-map-illustration img { max-height: 360px; object-fit: contain; }
+}
 @media (max-width: 780px) {
   .task-map-layout { grid-template-columns: 158px minmax(0, 1fr); gap: 15px; }
   .task-map-side { padding-right: 8px; }
 }
 @media (max-width: 590px) {
   .task-map-layout { grid-template-columns: minmax(0, 1fr); gap: 13px; }
-  .task-map-side { border-right: 0; border-bottom: 1px solid var(--map-line); padding-right: 0; }
-  .task-map-network { height: 300px; }
-  .task-map-actions { bottom: 6px; right: 6px; }
+  .task-map-media { grid-row: 1; }
+  .task-map-side { border-right: 0; border-top: 1px solid var(--map-line); padding: 14px 0 0; }
+  .task-map-network { height: 240px; width: min(100%, 360px); margin: 8px auto 9px; }
   .task-map-actions button { padding: 6px 8px; }
 }
+@media (max-width: 420px) {
+  .task-map-controls { flex-wrap: wrap; gap: 0 10px; }
+  .task-map-seek { flex-basis: 100%; }
+  .task-map-actions { margin-left: auto; }
+}
 @media (pointer: coarse) {
+  .task-map-seek { height: 44px; }
   .task-map-actions button { min-width: 44px; min-height: 44px; }
 }
