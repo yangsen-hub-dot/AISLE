@@ -87,6 +87,8 @@ for path, page in pages.items():
         if (
             u.fragment
             and target in pages
+            # The contribution landing page uses a hash router, not a DOM anchor.
+            and not (target.name == "contribute.html" and u.fragment == "/")
             and unquote(u.fragment) not in pages[target].ids
         ):
             errors.append(f"{path.name}: missing anchor {ref}")

@@ -39,6 +39,8 @@ for path, page in pages.items():
         assert target.is_relative_to(ROOT.resolve()), f"Link escapes the preview: {ref}"
         assert target.exists(), f"Missing preview resource: {ref}"
         if url.fragment and target in pages:
+            if target.name == "contribute.html" and url.fragment == "/":
+                continue  # Entry route of the supplied contribution demo.
             assert unquote(url.fragment) in pages[target].ids, f"Missing preview anchor: {ref}"
 for path in ROOT.glob("*.html"):
     assert f'{BASE}/{path.name}' in path.read_text(encoding="utf-8")

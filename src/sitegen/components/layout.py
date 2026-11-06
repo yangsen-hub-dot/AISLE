@@ -43,7 +43,7 @@ def shell(page, title, description, body, version):
     url = f"{os.environ.get('AISLE_SITE_URL', 'https://aisle.science').rstrip('/')}/{page}"
     portal = page == "index.html"
     body_class = ' class="tasks-page"' if page == "tasks.html" else ""
-    contribution = page in {"contribute.html", "review.html"}
+    contribution = page == "review.html"
     contribution_assets = (
         f'<link rel="stylesheet" href="assets/css/contribution.css?v={version}">'
         f'<script type="module" src="assets/js/contribution.js?v={version}"></script>'

@@ -8,8 +8,9 @@
 - [Review workspace](https://yangsen-hub-dot.github.io/AISLE/review.html)
 - [Agreed contribution flow diagram, in Chinese](https://yangsen-hub-dot.github.io/AISLE/flow/index.html#overall)
 
-These are rendered pages. The contribution and review demo shares records only
-within the same browser; online multi-user review is not connected yet.
+The Contribute page presents the supplied Dry Lab / Wet Lab interactive demo.
+Its task records stay in localStorage in the current browser. The earlier review
+prototype remains separate and does not receive these demo records.
 
 ## Clone this development version
 
@@ -27,9 +28,9 @@ Use Python 3.12 or later. On macOS/Linux, replace `python` with `python3` if nee
 on Windows, `py -3 -X utf8 scripts/build_site.py` also works. A normal build needs
 only Python's standard library, with no database, npm install, or API credentials.
 
-Open `http://127.0.0.1:4173/index.html` manually. The new views are
-`/contribute.html` and `/review.html`. Keep the same browser, hostname and port when
-switching between them so they share the same local records.
+Open `http://127.0.0.1:4173/index.html` manually. The new contribution portal is at
+`/contribute.html`; `/review.html` retains the earlier IndexedDB review prototype.
+The two prototypes have separate local records.
 
 Edit source files and run the build command again, then refresh the page.
 Create a personal branch with `git switch -c your-change` before making changes.
@@ -145,15 +146,16 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the agreed PR and deployment process.
 
 ## Local contribution workspace
 
-Open `contribute.html` from the site navigation to prepare a short proposal, then
-a complete task package after proposal approval. `review.html` provides the local
-review queue, requests for changes, scientific/technical sign-off and acceptance
-for later integration. No experiment execution or measurement ingestion is connected.
+Open `contribute.html` from the site navigation to choose Dry Lab or Wet Lab.
+Dry Lab creates task IDs and a copyable GitHub PR outline. Wet Lab demonstrates
+task records, lab availability and simulated evidence packaging/submission.
+The entry form accepts demo values, creates no account and stores no password.
+See [the supplied design and deployment notes](docs/contribute-demo.md).
 
-Records and attachment bytes are saved in IndexedDB in the same browser and origin.
-This is a local workflow prototype, not authenticated multi-user review. Use the
-explicit package export to retain a copy of all revisions and their materials.
-Switching port/browser or clearing site data starts a separate local workspace.
+The new portal saves task records in localStorage. The older `review.html`
+prototype retains its existing IndexedDB records and package export, independently
+of the new portal. Neither prototype supplies real authentication, shared review,
+experiment execution or measurement ingestion. Clearing site data removes local records.
 
 The controller and persistence check runs without opening a browser:
 
