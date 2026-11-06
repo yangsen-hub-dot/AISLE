@@ -26,7 +26,7 @@ jobs:
           python-version: '3.12'
       - uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: '24.18.0'
       - name: Build fork preview
         run: python -X utf8 scripts/prepare_preview.py
       - name: Check site and preview boundaries
