@@ -1,6 +1,7 @@
 """Shared page chrome and metadata."""
 
 import json
+import os
 from ..context import DATA, esc
 from .hand import HAND_ATLAS
 
@@ -39,7 +40,7 @@ def results_data():
 
 
 def shell(page, title, description, body, version):
-    url = f"https://aisle.science/{page}"
+    url = f"{os.environ.get('AISLE_SITE_URL', 'https://aisle.science').rstrip('/')}/{page}"
     portal = page == "index.html"
     body_class = ' class="tasks-page"' if page == "tasks.html" else ""
     contribution = page in {"contribute.html", "review.html"}

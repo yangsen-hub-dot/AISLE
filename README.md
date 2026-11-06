@@ -2,6 +2,15 @@
 
 [aisle.science](https://aisle.science/) presents the experimental evaluation of AI scientists. The site is English only, with an interactive research network, experimental films, fixed-cohort leaderboards and task protocols.
 
+## Open the workflow preview
+
+- [Task Contribution workspace](https://yangsen-hub-dot.github.io/AISLE/contribute.html)
+- [Review workspace](https://yangsen-hub-dot.github.io/AISLE/review.html)
+- [Agreed contribution flow diagram, in Chinese](https://yangsen-hub-dot.github.io/AISLE/flow/index.html#overall)
+
+These are rendered pages. The contribution and review demo shares records only
+within the same browser; online multi-user review is not connected yet.
+
 ## Clone this development version
 
 The `contribution-workflow` branch contains the interactive task catalogue and
@@ -102,7 +111,15 @@ in `design/generated/`. See [editing content](docs/content-guide.md) for regener
 
 ## Publication
 
-Push to `main` to run `.github/workflows/pages.yml`: build → validate → upload `dist/` → deploy to GitHub Pages. Pull requests run the same checks without publishing. Pages is configured to use GitHub Actions; the custom domain remains `aisle.science`.
+The upstream `nlz25/AISLE` repository deploys `main` through
+`.github/workflows/pages.yml` to `aisle.science`. This fork is separate:
+its workflow preview is published from the root of `gh-pages`, without a custom
+domain. Changes on `contribution-workflow` do not automatically deploy.
+
+To prepare an updated fork preview, run `python -X utf8 scripts/prepare_preview.py`.
+It writes `.qa/pages-site/` with the fork URL, no production counter endpoint,
+no `CNAME`, and a `.nojekyll` marker. Publish that directory's contents to
+`gh-pages`; do not publish the source tree as the site.
 
 ## Documentation
 

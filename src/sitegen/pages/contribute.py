@@ -13,6 +13,7 @@ def workspace(mode):
     return f'''<main id="main" class="contribution-page wrap">
       <section class="cw-hero"><p class="cw-eyebrow">AISLE / {"TASK REVIEW" if reviewing else "CONTRIBUTE A TASK"}</p>
         <h1>{title}</h1><p class="cw-lead">{intro}</p>{switch}
+        <p><a class="cw-link" href="flow/index.html#overall">View the agreed contribution flow (Chinese) &rarr;</a></p>
       </section>
       <ol class="cw-route" aria-label="Contribution process">
         <li><span>01</span> Short proposal</li><li><span>02</span> Complete materials</li>
