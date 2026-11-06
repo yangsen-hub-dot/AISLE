@@ -1,5 +1,10 @@
 # Contribution and review workflow
 
+The deployed Contribute page now uses the owner-supplied Dry Lab / Wet Lab demo;
+see [contribution portal notes](contribute-demo.md). The specification below
+documents the earlier IndexedDB prototype, whose review page remains available.
+Its records are separate from the new portal's localStorage records.
+
 ## Scope
 
 The contribution module supports preparing a scientific task, submitting its

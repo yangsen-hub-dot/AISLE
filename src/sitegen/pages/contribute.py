@@ -1,5 +1,17 @@
 """Local contribution and review workspaces, before task integration."""
 
+import os
+from pathlib import Path
+
+
+def contribute_document(version):
+    """Use the supplied standalone design without the shared page styles."""
+    template = Path(__file__).resolve().parents[1] / "templates/contribute.html"
+    site_url = os.environ.get("AISLE_SITE_URL", "https://aisle.science").rstrip("/")
+    return template.read_text(encoding="utf-8").replace(
+        "__ASSET_VERSION__", version
+    ).replace("__SITE_URL__", site_url)
+
 
 def workspace(mode):
     reviewing = mode == "review"

@@ -14,7 +14,7 @@ from sitegen.components.hand import HAND_ATLAS
 from sitegen.pages.home import home
 from sitegen.pages.leaderboard import leaderboard
 from sitegen.pages.tasks import tasks
-from sitegen.pages.contribute import contribute, review
+from sitegen.pages.contribute import contribute, contribute_document, review
 
 
 def main():
@@ -45,6 +45,7 @@ def main():
     shutil.copy2(ROOT / "src/styles/portal.css", css / "portal.css")
     shutil.copy2(ROOT / "src/styles/network.css", css / "network.css")
     shutil.copy2(ROOT / "src/styles/contribution.css", css / "contribution.css")
+    shutil.copy2(ROOT / "src/styles/contribute-demo.css", css / "contribute-demo.css")
     for source in (ROOT / "src/scripts").glob("*.js"):
         (js / source.name).write_text(
             source.read_text().replace("__ASSET_VERSION__", version)
@@ -58,7 +59,8 @@ def main():
         ("review.html", "Task review workspace", review),
     ]:
         (DIST / filename).write_text(
-            shell(filename, title, description, render(), version)
+            contribute_document(version) if filename == "contribute.html"
+            else shell(filename, title, description, render(), version)
         )
     (DIST / "build.json").write_text(
         json.dumps({"asset_version": version, "pages": 5}) + "\n"
