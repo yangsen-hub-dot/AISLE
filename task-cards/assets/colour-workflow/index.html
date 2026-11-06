@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AISLE · Colour matching</title>
+  <link rel="stylesheet" href="style.css?v=guided-1">
+  <script type="importmap">{"imports":{"three":"../colour-scene/three.module.js"}}</script>
+</head>
+<body>
+<div id="scene-viewport"><main id="artboard">
+  <header><strong>AISLE</strong><span>AI SCIENTISTS’ LAST EXAM</span><span class="site">BENCHMARK TASK  /  SUZHOU REAL-4D</span></header>
+  <section class="intro">
+    <div><div class="kicker">EXPERIMENTAL OPTIMISATION</div><h1>Colour matching</h1><p>Choose a formulation, test it on the bench, and use the measured colour to decide what to try next.</p></div>
+    <div class="goal"><i class="swatch target-colour"></i><div><span class="kicker">FIXED TARGET</span><strong>Match this colour</strong></div></div>
+  </section>
+  <section class="field" aria-label="Illustrative experimental loop">
+    <aside class="decision">
+      <div class="step"><b>01</b> CHOOSE THE NEXT FORMULATION</div>
+      <div class="optimisers">
+        <div class="selected-agent"><img src="icons/codex.svg" alt=""><div><strong>LLM agent</strong><span>Codex shown as an example</span></div></div>
+        <span class="or">OR</span>
+        <div class="bo"><strong>BO</strong><span>Bayesian optimisation</span></div>
+      </div>
+      <div class="model-strip"><div id="alternatives"></div><span>Other model examples</span></div>
+      <section class="search">
+        <h2>Candidate formulations</h2>
+        <p>Illustrative view of the four-component search</p>
+        <div class="surface" role="img" aria-label="Schematic three-dimensional search surface with tested and selected formulations">
+          <canvas id="search-canvas" aria-hidden="true"></canvas>
+          <svg id="search-labels" viewBox="0 0 420 205" aria-hidden="true"></svg>
+        </div>
+      </section>
+      <div class="receiver"><span class="return-icon">↺</span><div><strong>Update the search</strong><small>Use observation 01 to select formulation 02.</small></div></div>
+    </aside>
+    <div class="lab-title"><div class="step"><b>02</b> RUN THE EXPERIMENT</div><h2>From formulation to sample <small>Run 01 shown</small></h2></div>
+    <canvas id="lab-canvas"></canvas>
+    <svg id="lab-labels" viewBox="0 0 1130 623" preserveAspectRatio="none" aria-hidden="true"></svg>
+    <svg class="connectors" viewBox="0 0 1776 805" aria-hidden="true">
+      <defs>
+        <marker id="tip" viewBox="0 0 14 14" refX="12" refY="7" markerWidth="14" markerHeight="14" markerUnits="userSpaceOnUse" orient="auto"><path d="m3 2 9 5-9 5" fill="none" stroke="#78549f" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+        <marker id="feedback-tip" viewBox="0 0 14 14" refX="12" refY="7" markerWidth="14" markerHeight="14" markerUnits="userSpaceOnUse" orient="auto"><path d="m3 2 9 5-9 5" fill="none" stroke="#51796d" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+        <path id="search-outbound"/>
+        <path id="bench-route" d="M845 164H933C961 164 975 178 975 206V223"/>
+        <path id="feedback-route" d="M1551 550V650C1551 679 1536 694 1507 694H491C457 694 443 677 443 645V588C443 563 431 550 407 550H391"/>
+      </defs>
+      <path id="detail-leader" class="detail-link"/>
+      <use href="#search-outbound" class="line-halo"/>
+      <use href="#bench-route" class="line-halo"/>
+      <use href="#feedback-route" class="line-halo"/>
+      <use href="#search-outbound" class="send" marker-end="url(#tip)"/>
+      <use href="#bench-route" class="send" marker-end="url(#tip)"/>
+      <use href="#feedback-route" class="return" marker-end="url(#feedback-tip)"/>
+    </svg>
+    <section class="recipe" aria-label="Selected formulation and relative volumes">
+        <div><strong>Formulation 02</strong><span>NEXT RUN ↗</span></div>
+      <div id="formulation-chart"></div>
+    </section>
+    <section class="sample">
+      <div class="step"><b>03</b> OBSERVE THE COLOUR</div>
+      <canvas id="sample-canvas"></canvas>
+      <div class="inset-label">Dispensing into the sample well</div>
+      <div class="comparison">
+        <div><i class="swatch observed-colour"></i><span>Observation 01</span></div>
+        <div><i class="swatch target-colour"></i><span>Fixed target</span></div>
+      </div>
+    </section>
+    <div class="procedure">
+      <span><b>1</b> Pick up A–D</span><i></i><span><b>2</b> Dispense and mix</span><i></i><span><b>3</b> Read sample colour</span>
+    </div>
+    <div class="return-caption"><i class="swatch observed-colour"></i><span><strong>Observation 01</strong>  /  Return the sample colour to the optimiser</span></div>
+    <div class="field-foot"><span>ILLUSTRATIVE WORKFLOW</span><span>01 tested → 02 selected</span></div>
+  </section>
+  <section class="evaluation" aria-label="Evaluation criteria">
+    <div><span class="kicker">AGENT EVALUATION</span><strong>One fixed target and a limited experiment budget</strong></div>
+    <div><span class="kicker">SUCCESS CRITERION</span><strong>ΔE₀₀ ≤ 1</strong></div>
+    <div><span class="kicker">EXPERIMENT BUDGET</span><strong>12 scored experiments <small>/ run</small></strong></div>
+  </section>
+  <footer>Apparatus, formulations and colours are illustrative.</footer>
+</main></div>
+<script type="module" src="main.js?v=guided-1"></script>
+</body>
+</html>

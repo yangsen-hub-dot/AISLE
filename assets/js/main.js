@@ -1,0 +1,85 @@
+/* Load each view's enhancements only when that view is needed. */
+import './navigation.js?v=c6fd4b2ff6a2';
+
+const entrance = document.getElementById('entrance');
+if (entrance) {
+  await import('./portal.js?v=c6fd4b2ff6a2');
+  const { loadHandRig } = await import('./portal-hand.js?v=c6fd4b2ff6a2');
+  let research;
+  const loadResearch = () => {
+    if (!entrance.hidden || research) return;
+    research = Promise.all([
+      import('./research.js?v=c6fd4b2ff6a2'),
+      import('./network.js?v=c6fd4b2ff6a2')
+    ]).catch(error => {
+      research = null;
+      console.warn('Research enhancements unavailable', error);
+    });
+  };
+  document.addEventListener('aisle:viewchange', loadResearch);
+  loadResearch();
+
+  // Defer WebGL work without waiting for either hand image to download.
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  const connection = navigator.connection;
+  const globeElement = entrance.querySelector('.portal-globe');
+  let globe;
+  const loadGlobe = () => {
+    if (globe) return;
+    if (reduced.matches || connection?.saveData) {
+      globeElement.dataset.globeState = 'static';
+      return;
+    }
+    if (entrance.hidden) return;
+    globeElement.dataset.globeState = 'loading';
+    globe = import('./globe.js?v=c6fd4b2ff6a2').catch(error => {
+      globe = null;
+      globeElement.dataset.globeState = 'fallback';
+      console.warn('Using static Earth artwork', error);
+    });
+  };
+  const scheduleGlobe = () => {
+    if ('requestIdleCallback' in window) requestIdleCallback(loadGlobe, {
+      timeout: 2000
+    });
+    else setTimeout(loadGlobe, 600);
+  };
+  // The static image paints without JS; articulation reuses that decoded image.
+  void loadHandRig(entrance);
+  scheduleGlobe();
+  document.addEventListener('aisle:viewchange', scheduleGlobe);
+  reduced.addEventListener('change', scheduleGlobe);
+} else if (document.getElementById('results-data')) {
+  await import('./research.js?v=c6fd4b2ff6a2');
+} else {
+  const catalogueFrame = document.getElementById('task-catalogue-frame');
+  if (catalogueFrame) {
+    let observer;
+    let pendingAnchor = location.hash;
+    const scrollToCatalogueAnchor = () => {
+      if (!['#featured-case', '#task-quantum-dot'].includes(pendingAnchor)) return;
+      const target = catalogueFrame.contentDocument?.getElementById(pendingAnchor.slice(1));
+      if (target?.getClientRects().length && catalogueFrame.getClientRects().length) {
+        target.scrollIntoView({ block: 'start' });
+        pendingAnchor = '';
+      }
+    };
+    const fitCatalogue = () => {
+      observer?.disconnect();
+      const catalogue = catalogueFrame.contentDocument?.getElementById('app');
+      if (!catalogue?.firstElementChild) return;
+      observer = new ResizeObserver(() => {
+        const height = Math.ceil(catalogue.getBoundingClientRect().height);
+        if (height > 0) catalogueFrame.style.height = `${height}px`;
+        scrollToCatalogueAnchor();
+      });
+      observer.observe(catalogue);
+    };
+    window.addEventListener('hashchange', () => {
+      pendingAnchor = location.hash;
+      scrollToCatalogueAnchor();
+    });
+    catalogueFrame.addEventListener('load', fitCatalogue);
+    fitCatalogue();
+  }
+}
