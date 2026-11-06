@@ -2,12 +2,14 @@ function interactiveTaskMarkup(task,back){
  const stages=task.stages.map((s,i)=>'<button type="button" data-stage="'+i+'" aria-pressed="'+(i===0)+'">'+s.label+'</button>').join('');
  return `<main class="wrap">
   <section class="detail-intro">${back}<h1 class="detail-title">${task.title}</h1></section>
+  <section data-task-map="${task.id}" aria-label="${task.title} task map"></section>
+  <details class="task-map-extra"><summary>Interactive 3D walkthrough</summary>
   <section class="case interactive-case" data-scene="${task.id}">
    <div class="interactive-body">
     <div class="interactive-visual">
      <div class="interactive-viewport">
       <img class="interactive-poster" src="assets/${task.poster}" alt="${task.videoTitle}">
-      <iframe id="experiment-scene" src="${task.scene}" title="${task.videoTitle}"></iframe>
+      <iframe id="experiment-scene" loading="lazy" src="${task.scene}" title="${task.videoTitle}"></iframe>
       <span id="scene-loading" role="status">Preparing the experiment…</span>
      </div>
     </div>
@@ -26,6 +28,7 @@ function interactiveTaskMarkup(task,back){
    </div>
    <div class="interactive-foot"><span>${task.caption}</span><a href="${task.official}" target="_blank" rel="noreferrer">Official task ↗</a>${task.film ? `<a href="${task.film}" target="_blank" rel="noreferrer">Experiment footage ↗</a>` : ''}</div>
   </section>
+  </details>
  </main>`;
 }
 addEventListener('DOMContentLoaded',()=>{

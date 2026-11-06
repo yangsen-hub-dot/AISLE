@@ -12,6 +12,8 @@
   <meta property="og:image" content="https://yangsen-hub-dot.github.io/AISLE/task-cards/assets/quantum-dot-workflow-cover.webp">
   <link rel="stylesheet" href="style.css?v=mondrian-6">
   <link rel="stylesheet" href="assets/quantum-dot.css?v=qd-cover-1">
+  <link rel="stylesheet" href="assets/task-graphs.css?v=task-graphs-1">
+  <script src="assets/task-graphs.js?v=task-graphs-1" defer></script>
 </head>
 <body class="qd-page">
   <header class="header wrap">
@@ -34,10 +36,12 @@
     </section>
     <section class="qd-loop" aria-labelledby="loop-title">
       <div class="qd-section-top"><h2 id="loop-title">Experimental loop</h2></div>
+      <div data-task-map="quantum-dot">
       <figure class="qd-workflow-illustration">
         <img src="assets/quantum-dot-workflow-cover.webp" width="2816" height="1584" alt="Quantum dot formulation optimisation: reagent selection, CdS and ligand structure, plate measurements, spectral feedback and final scoring." decoding="async">
         <figcaption>Workflow illustration · Structures and spectra are schematic.</figcaption>
       </figure>
+      </div>
       <ol class="qd-loop-steps">
         <li><span class="qd-step-number" aria-hidden="true">01</span><p>Choose pH, MPA and Na₂S.</p></li>
         <li><span class="qd-step-number" aria-hidden="true">02</span><p>Read spectra from both wells.</p></li>
