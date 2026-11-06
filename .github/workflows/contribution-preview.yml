@@ -1,0 +1,66 @@
+name: Contribution preview
+
+on:
+  pull_request:
+    branches: [contribution-workflow]
+  push:
+    branches: [contribution-workflow]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: contribution-preview-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  check:
+    name: Build and check contribution preview
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Build fork preview
+        run: python -X utf8 scripts/prepare_preview.py
+      - name: Check site and preview boundaries
+        run: |
+          python -X utf8 scripts/check_site.py
+          python -X utf8 scripts/check_preview.py
+          for file in src/scripts/*.js; do node --check "$file"; done
+          node --test scripts/globe-quality.test.mjs scripts/portal-loading.test.mjs
+          node scripts/check_contribution_model.mjs
+      - name: Check contribution forms and local persistence
+        run: |
+          npm install --prefix .qa --no-save --package-lock=false --ignore-scripts jsdom@31.0.0 fake-indexeddb@6.2.7
+          node scripts/check_contribution_ui.mjs
+      - name: Upload deployment artifact
+        if: github.repository == 'yangsen-hub-dot/AISLE' && github.event_name == 'push' && github.ref == 'refs/heads/contribution-workflow'
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: .qa/pages-preview
+
+  deploy:
+    name: Deploy contribution preview
+    if: github.repository == 'yangsen-hub-dot/AISLE' && github.event_name == 'push' && github.ref == 'refs/heads/contribution-workflow'
+    needs: check
+    runs-on: ubuntu-latest
+    concurrency:
+      group: contribution-preview-pages
+      cancel-in-progress: false
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy Pages artifact
+        id: deployment
+        uses: actions/deploy-pages@v4

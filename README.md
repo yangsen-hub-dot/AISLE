@@ -113,13 +113,24 @@ in `design/generated/`. See [editing content](docs/content-guide.md) for regener
 
 The upstream `nlz25/AISLE` repository deploys `main` through
 `.github/workflows/pages.yml` to `aisle.science`. This fork is separate:
-its workflow preview is published from the root of `gh-pages`, without a custom
-domain. Changes on `contribution-workflow` do not automatically deploy.
+its workflow preview uses `.github/workflows/contribution-preview.yml` and
+GitHub Actions, without a custom domain. Pull requests into
+`contribution-workflow` run checks only. After merging, a push to that branch
+builds and deploys the checked artifact to the same preview URLs above.
 
 To prepare an updated fork preview, run `python -X utf8 scripts/prepare_preview.py`.
-It writes `.qa/pages-site/` with the fork URL, no production counter endpoint,
-no `CNAME`, and a `.nojekyll` marker. Publish that directory's contents to
-`gh-pages`; do not publish the source tree as the site.
+It writes `.qa/pages-preview/` with the fork URL, no production counter endpoint,
+no `CNAME`, and a `.nojekyll` marker. `python scripts/check_preview.py` checks
+that artifact. The workflow uploads it with the official Pages actions;
+contributors do not need to push a generated `gh-pages` branch.
+
+Repository setup: select GitHub Actions as the Pages source and allow only
+`contribution-workflow` in the `github-pages` environment's deployment branch
+rules. Disable the inherited upstream `pages.yml` workflow in this fork so a
+push to its `main` cannot replace the workflow preview. The old `gh-pages`
+branch remains as the earlier published snapshot.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the agreed PR and deployment process.
 
 ## Documentation
 

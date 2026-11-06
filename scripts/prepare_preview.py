@@ -10,9 +10,9 @@ env = dict(os.environ, AISLE_SITE_URL="https://yangsen-hub-dot.github.io/AISLE",
            AISLE_COUNTER_ENDPOINT="")
 subprocess.run([sys.executable, "-X", "utf8", str(ROOT / "scripts/build_site.py")],
                cwd=ROOT, env=env, check=True)
-target = ROOT / ".qa/pages-site"
+target = ROOT / ".qa/pages-preview"
 if target.exists():
-    if target.resolve() != ROOT / ".qa/pages-site" or target.is_symlink():
+    if target.resolve() != ROOT / ".qa/pages-preview" or target.is_symlink():
         raise SystemExit("Unexpected preview output path.")
     if (target / ".git").exists():
         raise SystemExit("Preview output contains Git state; retain it and use another output directory.")
