@@ -123,19 +123,12 @@ const catalog = `<main class="wrap catalogue-main">
    </div>
    <div id="task-results" hidden>
    <div class="catalog-toolbar">
-     <div class="task-filters" role="group" aria-label="Filter tasks by collection">
-       <button type="button" data-task-filter="all" aria-pressed="true">All tasks <span>7</span></button>
-       <button type="button" data-task-filter="benchmark" aria-pressed="false">AISLE benchmark <span>4</span></button>
-       <button type="button" data-task-filter="psi" aria-pressed="false">PSI-Bench <span>1</span></button>
-       <button type="button" data-task-filter="proposed" aria-pressed="false">Proposed <span>2</span></button>
-     </div>
-     <div class="catalog-tools"><label class="task-search"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4 4"/></svg><input id="task-search" type="search" placeholder="Search tasks…" aria-label="Search tasks" autocomplete="off" maxlength="160"></label>
-       <span id="task-result-count" role="status" aria-atomic="true">${taskEntries.length} tasks</span>
-     </div>
+     <label class="task-search"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4 4"/></svg><input id="task-search" type="search" placeholder="Search tasks…" aria-label="Search tasks" autocomplete="off" maxlength="160"></label>
+     <span id="task-result-count" role="status" aria-atomic="true">${taskEntries.length} tasks</span>
    </div>
    <section id="visual-panel" aria-labelledby="visual-tab" hidden><div class="card-grid">${renderCards()}</div></section>
    <section id="list-panel" aria-labelledby="list-tab" hidden>${renderTaskList()}</section>
-   <div class="catalog-empty" id="task-empty" hidden><h3>No tasks found</h3><p>Try a different keyword or browse all seven tasks.</p><button type="button" id="clear-task-filters">Clear search &amp; filters</button></div>
+   <div class="catalog-empty" id="task-empty" hidden><h3>No tasks found</h3><p>Try a different keyword or browse all seven tasks.</p><button type="button" id="clear-task-search">Clear search</button></div>
    <p class="catalog-footnote">Proposed tasks are workflow proposals and are not included in AISLE benchmark scores.</p>
    </div>
  </section>
@@ -290,13 +283,11 @@ if(document.body.dataset.page==='catalog'){
  const modes={cards:document.getElementById('visual-tab'),list:document.getElementById('list-tab')};
  const results=document.getElementById('task-results');
  const search=document.getElementById('task-search');
- const filterButtons=[...document.querySelectorAll('[data-task-filter]')];
  const chooser=document.querySelector('[data-map-chooser]');
  // Embedded and standalone catalogues share the same bookmarkable browsing state.
  let stateWindow=window;
  if(embedded){try{if(window.parent.location.origin===location.origin)stateWindow=window.parent;}catch{}}
  const initial=new URL(stateWindow.location.href).searchParams;
- let collection=filterButtons.some(button=>button.dataset.taskFilter===initial.get('collection'))?initial.get('collection'):'all';
  const featureFrom=params=>taskEntries.find(task=>task.id===params.get('task'))?.id??defaultFeature.id;
  let selected=featureFrom(initial);
  let view='';
@@ -308,7 +299,8 @@ if(document.body.dataset.page==='catalog'){
  function saveState(){
   const url=new URL(stateWindow.location.href);
   if(!restoringHistory){
-   for(const [key,value] of Object.entries({task:selected===defaultFeature.id?'':selected,collection:collection==='all'?'':collection,q:search.value.trim(),view})){
+   url.searchParams.delete('collection');
+   for(const [key,value] of Object.entries({task:selected===defaultFeature.id?'':selected,q:search.value.trim(),view})){
     if(value)url.searchParams.set(key,value);else url.searchParams.delete(key);
    }
    stateWindow.history.replaceState(stateWindow.history.state,'',url);
@@ -332,9 +324,8 @@ if(document.body.dataset.page==='catalog'){
  }
  function filterTasks(persist=true){
   const terms=normalize(search.value.trim()).split(/\s+/).filter(Boolean);
-  const matches=new Set(taskEntries.filter(task=>(collection==='all'||task.collection===collection)&&terms.every(term=>searchable.get(task.id).includes(term))).map(task=>task.id));
+  const matches=new Set(taskEntries.filter(task=>terms.every(term=>searchable.get(task.id).includes(term))).map(task=>task.id));
   document.querySelectorAll('[data-task-entry]').forEach(entry=>entry.hidden=!matches.has(entry.dataset.taskEntry));
-  filterButtons.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.taskFilter===collection)));
   document.getElementById('task-result-count').textContent=`${matches.size} ${matches.size===1?'task':'tasks'}${matches.size===taskEntries.length?'':` of ${taskEntries.length}`}`;
   document.getElementById('task-empty').hidden=matches.size>0;
   if(persist)saveState();
@@ -357,8 +348,7 @@ if(document.body.dataset.page==='catalog'){
  }
  for(const [mode,button] of Object.entries(modes))button.addEventListener('click',()=>switchView(mode));
  search.addEventListener('input',()=>filterTasks());
- filterButtons.forEach(button=>button.addEventListener('click',()=>{collection=button.dataset.taskFilter;filterTasks();}));
- document.getElementById('clear-task-filters').addEventListener('click',()=>{collection='all';search.value='';filterTasks();search.focus();});
+ document.getElementById('clear-task-search').addEventListener('click',()=>{search.value='';filterTasks();search.focus();});
  document.querySelectorAll('[data-preview-task]').forEach(button=>button.addEventListener('click',()=>{
   chooser.value=button.dataset.previewTask;
   chooser.dispatchEvent(new Event('change'));
@@ -368,12 +358,11 @@ if(document.body.dataset.page==='catalog'){
   heading.tabIndex=-1;heading.focus({preventScroll:true});
  }));
  document.addEventListener('catalog-feature-change',event=>{selected=event.detail.task;markPreview();saveState();});
- document.addEventListener('catalog-reveal-task',()=>{collection='all';search.value='';switchView('cards',false);filterTasks();});
+ document.addEventListener('catalog-reveal-task',()=>{search.value='';switchView('cards',false);filterTasks();});
  stateWindow.addEventListener('popstate',()=>{
   const params=new URL(stateWindow.location.href).searchParams;
   restoringHistory=true;
   try{
-   collection=filterButtons.some(button=>button.dataset.taskFilter===params.get('collection'))?params.get('collection'):'all';
    const nextTask=featureFrom(params);
    search.value=(params.get('q')||'').slice(0,160);
    switchView(initialView(params),false);

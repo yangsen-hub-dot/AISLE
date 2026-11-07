@@ -73,24 +73,7 @@
 .catalog-views button span[aria-hidden] { color: var(--accent); font-size: .8em; }
 .catalog-protocols { margin-top: 24px; }
 .catalog-protocols .small-link { min-height: 36px; }
-.catalog-toolbar, .catalog-tools, .task-filters { display: flex; align-items: center; gap: 10px; }
-.catalog-toolbar { flex-wrap: wrap; justify-content: space-between; margin: 21px 0 15px; }
-.task-filters { flex-wrap: wrap; gap: 5px; }
-.task-filters button {
-  min-height: 40px;
-  padding: 7px 10px;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  background: none;
-  color: var(--muted);
-  font-size: 13px;
-}
-.task-filters button span { margin-left: 3px; font-size: 11px; }
-.task-filters button:is(:hover, [aria-pressed="true"]) {
-  border-color: #487a9a;
-  background: var(--soft);
-  color: var(--ink);
-}
+.catalog-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin: 21px 0 15px; }
 .task-search {
   display: flex;
   align-items: center;
