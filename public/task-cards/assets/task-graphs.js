@@ -46,7 +46,7 @@
     spectral: {
       heading: 'Infer a hidden chemical transition.',
       video: 'spectral-inference.mp4', poster: 'spectral-inference-v21.webp', duration: 40,
-      source: 'Synthetic spectra · Illustrative pKa inference',
+      source: 'Illustrative case using synthetic spectra · Report a pKa estimate and a 95% interval.',
       nodes: [
         ['pKa', 48, 43, 0, 'Choose measurements that reveal an unknown acid–base transition.'],
         ['Select pH', 27, 10, 2.3, 'Choose a pH at which to observe the indicator.'],
@@ -149,7 +149,7 @@
             <svg class="task-map-edges" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${edges}</svg>
             ${nodes}
           </div>
-          <div class="task-map-hint">${task.video ? 'Select a node to jump to its chapter' : 'Select a node to explore its role'}</div>
+          <div class="task-map-hint">${task.video ? 'Select a node to jump to its chapter.' : 'Select a node to explore its role.'}</div>
         </nav>
         <div class="task-map-media">
           ${task.video ? `
@@ -314,12 +314,14 @@
     if (!chooser) return;
     const host = document.querySelector('[data-feature-map]');
     const heading = document.querySelector('[data-feature-heading]');
+    const number = document.querySelector('[data-feature-number]');
     const detailLink = document.querySelector('[data-feature-detail]');
     function show() {
       host.querySelector('video')?.pause();
       const option = chooser.selectedOptions[0];
       const task = graphs[option.value];
       heading.textContent = task.heading;
+      if (number) number.textContent = `Task ${option.dataset.number}`;
       detailLink.href = option.dataset.href;
       render(host, option.value, option.dataset.href);
       if (document.body.classList.contains('catalog-embedded')) {
