@@ -60,7 +60,7 @@ def tasks():
     nav = "".join(f'<a href="#{key}">{title}</a>' for key, title, _ in sections)
     return f"""<main id="main">
     <section id="task-cards" class="task-catalogue" aria-label="Scientific tasks">
-      <iframe id="task-catalogue-frame" src="task-cards/index.html?embed=1&amp;v=no-suzhou-animation-2" title="Interactive AISLE task catalogue" allowfullscreen></iframe>
+      <iframe id="task-catalogue-frame" src="task-cards/index.html?embed=1&amp;v=neutral-workflow-3" title="Interactive AISLE task catalogue" allowfullscreen></iframe>
       <noscript><p class="wrap"><a href="#task-protocols">Protocols &amp; scoring</a></p></noscript>
     </section>
     <section id="task-protocols" class="task-protocols wrap" aria-labelledby="protocols-title">
