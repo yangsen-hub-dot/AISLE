@@ -122,7 +122,6 @@
   object-fit: contain;
   transform: none;
 }
-.catalogue-main #task-colour .card-art img { object-fit: cover; }
 .card-number {
   position: absolute;
   left: 12px;

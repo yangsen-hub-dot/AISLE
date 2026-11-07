@@ -4,7 +4,7 @@ const embedded = document.body.dataset.page === 'catalog'
   && new URLSearchParams(location.search).has('embed');
 const isVideoTask = document.body.dataset.page === 'video-task';
 const taskEntries = [
- {id:'colour',title:'Experimental optimisation',description:'Propose formulations and use experimental feedback to match a target colour.',tags:["Colour matching", "4D / 8D"],media:"SUZHOU · EXPERIMENT FILM",href:'color-matching.html',poster:'suzhou-film-card.webp'},
+ {id:'colour',title:'Experimental optimisation',description:'Propose formulations and use experimental feedback to match a target colour.',tags:["Colour matching", "4D / 8D"],media:"SUZHOU · ILLUSTRATED WORKFLOW",href:'color-matching.html',video:'colour-matching.mp4',poster:'colour-matching-opening-frame.webp'},
  {"id":"constraints","title":"Constraint adherence","description":"Match a target colour while keeping every executed experiment outside the forbidden band.","tags":["Colour matching", "Constraints"],"media":"INTERACTIVE 3D","href":"constraint-adherence.html","poster":"constraint-adherence-v19.webp","caseTitle":"Can the agent match a colour safely?","videoTitle":"Safety-constrained colour matching","caption":"GPT-5.5 source case · Illustrative replay","note":"Illustrative replay based on the supplied presentation. Colour-error values are approximately digitized; recipes, actions and the separate spectrum example are illustrative. The five equal model icons represent examples evaluated separately, not participants in a joint run. Visual review pending.","official":"../tasks.html#safety","scene":"assets/interactive/constraints/src/index.html?render","duration":36,"stages":[{"label":"Overview","time":0},{"label":"Experiment","time":4.2},{"label":"Observe","time":5.7},{"label":"Violation","time":15.5},{"label":"Safe match","time":22.5},{"label":"Verdict","time":34}]},
  {"id":"robustness","title":"Adaptive robustness","description":"Use physical measurements to adapt to hidden drift and changing transfer conditions.","tags":["Hidden drift", "Measured recovery"],"media":"INTERACTIVE 3D","href":"adaptive-robustness.html","poster":"adaptive-robustness-v20.webp","film":"../assets/experiments/bears.mp4","caseTitle":"Same command. Different result.","videoTitle":"Hidden pipetting drift and measured recovery","caption":"Sequential measured samples · Illustrative drift","note":"Illustrative one-channel example: commands 50 / 50 / 62.5 µL, delivered volumes 50 / 40 / 50 µL and schematic optical signals 100 / 80 / 100%. Delivered volume is viewer explanation, not agent telemetry. Recovery against the trigger-round baseline is distinct from target success. The five model icons are examples evaluated separately; no measured model scores are shown. Visual review pending.","official":"../tasks.html#robustness","scene":"assets/interactive/robustness/src/index.html?render","duration":38,"stages":[{"label":"Overview","time":0},{"label":"Baseline","time":9.4},{"label":"Hidden drift","time":19.4},{"label":"Adapt","time":24},{"label":"Recovery","time":30.4},{"label":"Evaluate","time":36}]},
  {"id":"spectral","title":"Multimodal spectral reasoning","description":"Use spectral observations to guide formulations or infer chemical properties.","tags":["Spectral matching", "pKa inference"],"media":"INTERACTIVE 3D","href":"spectral-inference.html","poster":"spectral-inference-v21.webp","caseTitle":"Infer a hidden chemical transition.","videoTitle":"Spectral pKa inference","caption":"Synthetic spectra · Conditional inference","note":"Synthetic two-state spectra illustrate four measurements within an eight-action budget. The pKa estimate and 95% interval are conditional on known spectral bases and noise, not measured performance on an unknown indicator. The methyl-orange structure is viewer context; its identity is hidden from the agent. The evaluator checks the correct pKa count and maximum error ≤ 0.10. Model icons are examples evaluated separately. Visual review pending.","official":"../tasks.html#multimodal","scene":"assets/interactive/spectral/src/index.html?render","duration":40,"stages":[{"label":"Overview","time":0},{"label":"Select pH","time":2.3},{"label":"Prepare","time":4.1},{"label":"Spectrum","time":8},{"label":"Compare","time":24.4},{"label":"Infer pKa","time":36}]},
@@ -87,9 +87,15 @@ function taskTags(task) {
  return `<div class="task-tags">${task.tags.map(tag => `<span>${tag}</span>`).join('')}</div>`;
 }
 
+function renderCardArt(task) {
+ if (!task.video) return `<img src="assets/${task.poster}" alt="" loading="lazy" decoding="async" width="760" height="475">`;
+ const preview = task.poster ? `poster="assets/${task.poster}" preload="none" data-cover-preview` : 'preload="metadata"';
+ return `<video src="assets/workflows/${task.video}#t=0.001" ${preview} muted playsinline aria-hidden="true" tabindex="-1"></video>`;
+}
+
 function renderCards() {
  return taskEntries.map(task => `<article class="task-card" id="task-${task.id}" data-task-entry="${task.id}" data-collection="${task.collection}" aria-labelledby="title-${task.id}">
-   <div class="card-art">${task.video ? `<video src="assets/workflows/${task.video}#t=0.001" preload="metadata" muted playsinline aria-hidden="true" tabindex="-1"></video>` : `<img src="assets/${task.poster}" alt="" loading="lazy" decoding="async" width="760" height="475">`}<span class="card-number">TASK ${task.number}</span></div>
+   <div class="card-art">${renderCardArt(task)}<span class="card-number">TASK ${task.number}</span></div>
    <div class="card-content">
      <div class="card-status-row"><span class="task-status">${task.status}</span><span class="card-previewing" hidden>In preview</span></div>
      <div class="card-title-row"><h3 id="title-${task.id}"><a class="task-title-link" href="${task.href}">${task.title}</a></h3></div>
@@ -284,6 +290,22 @@ if(document.body.dataset.page==='catalog'){
  const results=document.getElementById('task-results');
  const search=document.getElementById('task-search');
  const chooser=document.querySelector('[data-map-chooser]');
+ const cover=document.querySelector('[data-cover-preview]');
+ const coverCard=cover.closest('.task-card');
+ const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
+ const canHover=matchMedia('(any-hover: hover)');
+ function syncCover(){
+  const interacting=(canHover.matches&&coverCard.matches(':hover'))||coverCard.matches(':focus-within');
+  if(!reducedMotion.matches&&!document.hidden&&coverCard.getClientRects().length&&interacting){
+   if(cover.paused)cover.play().catch(()=>{});
+  }else cover.pause();
+ }
+ for(const event of ['pointerenter','pointerleave','focusin','focusout']){
+  coverCard.addEventListener(event,()=>requestAnimationFrame(syncCover));
+ }
+ document.addEventListener('catalog-view-change',syncCover);
+ document.addEventListener('visibilitychange',syncCover);
+ reducedMotion.addEventListener('change',syncCover);
  // Embedded and standalone catalogues share the same bookmarkable browsing state.
  let stateWindow=window;
  if(embedded){try{if(window.parent.location.origin===location.origin)stateWindow=window.parent;}catch{}}
@@ -328,6 +350,7 @@ if(document.body.dataset.page==='catalog'){
   document.querySelectorAll('[data-task-entry]').forEach(entry=>entry.hidden=!matches.has(entry.dataset.taskEntry));
   document.getElementById('task-result-count').textContent=`${matches.size} ${matches.size===1?'task':'tasks'}${matches.size===taskEntries.length?'':` of ${taskEntries.length}`}`;
   document.getElementById('task-empty').hidden=matches.size>0;
+  syncCover();
   if(persist)saveState();
  }
  function switchView(mode,persist=true){
