@@ -19,7 +19,7 @@ def tasks():
         "optimization",
         "01 / Experimental optimisation",
         f"""
-      <p>Models propose formulations, observe the resulting colour and choose the next experiment. Four task groups contribute equally to the category: Suzhou Real-4D, Singapore Real-4D, Sim-4D 0-shot and Suzhou Real-8D.</p>
+      <p>Models propose formulations, observe the resulting colour and choose the next experiment. Four benchmark task groups contribute equally to the category.</p>
       {specs([("Budget", "12 scored experiments per run."), ("Success", "ΔE₀₀ ≤ 5 in Singapore; ΔE₀₀ ≤ 1 in the other groups."), ("Evidence", "Best error, success frequency, attainment efficiency and repeat stability."), ("History", "50-shot and 100-shot conditions analyze the use of prior data; they do not contribute again to the category score.")])}
       <p>In Real-8D, none of the 54 runs across the evaluated methods met the strict target. Continuous colour errors still distinguish progress. Site comparisons must account for different sensors, targets and thresholds.</p>""",
     )
@@ -60,7 +60,7 @@ def tasks():
     nav = "".join(f'<a href="#{key}">{title}</a>' for key, title, _ in sections)
     return f"""<main id="main">
     <section id="task-cards" class="task-catalogue" aria-label="Scientific tasks">
-      <iframe id="task-catalogue-frame" src="task-cards/index.html?embed=1&amp;v=reviewed-task02-04-1" title="Interactive AISLE task catalogue" allowfullscreen></iframe>
+      <iframe id="task-catalogue-frame" src="task-cards/index.html?embed=1&amp;v=no-regional-labels-1" title="Interactive AISLE task catalogue" allowfullscreen></iframe>
       <noscript><p class="wrap"><a href="#task-protocols">Protocols &amp; scoring</a></p></noscript>
     </section>
     <section id="task-protocols" class="task-protocols wrap" aria-labelledby="protocols-title">
