@@ -71,8 +71,6 @@
   stroke-linecap: round;
 }
 .catalog-views button span[aria-hidden] { color: var(--accent); font-size: .8em; }
-.catalog-protocols { margin-top: 24px; }
-.catalog-protocols .small-link { min-height: 36px; }
 .catalog-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin: 21px 0 15px; }
 .task-search {
   display: flex;

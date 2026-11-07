@@ -97,7 +97,6 @@ const catalog = `<main class="wrap catalogue-main">
    <p class="catalog-footnote">Proposed tasks are workflow proposals and are not included in AISLE benchmark scores.</p>
    </div>
  </section>
- <p class="catalog-protocols"><a class="small-link" href="../tasks.html#task-protocols">Protocols &amp; scoring <span aria-hidden="true">↗</span></a></p>
 </main>`;
 function taskDetailHeading(task, back) {
  return `<section class="detail-intro">
@@ -125,7 +124,7 @@ if (embedded) {
  for (const link of app.querySelectorAll('a[href]')) link.target = '_top';
 } else {
  app.innerHTML = (isVideoTask ? videoTaskMarkup() : isDetail ? detail : header + catalog)
-   + footer;
+   + (document.body.dataset.page === 'catalog' ? '' : footer);
 }
 if (isVideoTask) {
  const selectedId=document.body.dataset.task || new URLSearchParams(location.search).get('task');
@@ -138,17 +137,18 @@ if(document.body.dataset.page==='catalog'){
  const search=document.getElementById('task-search');
  const chooser=document.querySelector('[data-map-chooser]');
  const cover=document.querySelector('[data-cover-preview]');
- const coverCard=cover.closest('.task-card');
+ const coverCard=cover?.closest('.task-card');
  const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
  const canHover=matchMedia('(any-hover: hover)');
  function syncCover(){
+  if(!cover||!coverCard)return;
   const interacting=(canHover.matches&&coverCard.matches(':hover'))||coverCard.matches(':focus-within');
   if(!reducedMotion.matches&&!document.hidden&&coverCard.getClientRects().length&&interacting){
    if(cover.paused)cover.play().catch(()=>{});
   }else cover.pause();
  }
  for(const event of ['pointerenter','pointerleave','focusin','focusout']){
-  coverCard.addEventListener(event,()=>requestAnimationFrame(syncCover));
+  coverCard?.addEventListener(event,()=>requestAnimationFrame(syncCover));
  }
  document.addEventListener('catalog-view-change',syncCover);
  document.addEventListener('visibilitychange',syncCover);
