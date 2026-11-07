@@ -5,7 +5,7 @@
     colour: {
       heading: 'Can the agent match a target colour using experimental feedback?',
       video: 'colour-matching.mp4', poster: 'colour-matching-opening-frame.webp', duration: 36,
-      source: 'Suzhou Real-4D · Illustrated experimental workflow',
+      source: 'Illustrated experimental workflow',
       nodes: [
         ['Target', 50, 43, 0, 'Use the fixed target colour for the run.', 'Give every trial the same reference for judging a match.'],
         ['A–D recipe', 24, 12, 3.6, 'Choose the volumes of the four ingredients.', 'Turn the model’s proposal into a recipe the liquid handler can run.'],
@@ -64,7 +64,7 @@
       heading: 'Can a model predict solid electrolyte performance?',
       video: 'solid-electrolyte.mp4?v=arrows-1', duration: 42.28,
       poster: 'solid-electrolyte-opening-frame.webp',
-      source: 'PSI-Bench · Schematic evaluation workflow',
+      source: 'Materials benchmark · Schematic evaluation workflow',
       nodes: [
         ['Crystal', 48, 43, 0, 'Inspect the Li₆PS₅Cl reference crystal.', 'Identify the material behind the prediction task.'],
         ['Records', 25, 12, 5, 'Read the recorded recipe and experimental conditions for each sample.', 'Establish what information the model can use before predicting.'],

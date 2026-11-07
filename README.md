@@ -6,7 +6,6 @@
 
 - [Task Contribution workspace](https://yangsen-hub-dot.github.io/AISLE/contribute.html)
 - [Review workspace](https://yangsen-hub-dot.github.io/AISLE/review.html)
-- [Agreed contribution flow diagram, in Chinese](https://yangsen-hub-dot.github.io/AISLE/flow/index.html#overall)
 
 The Contribute page presents the supplied Dry Lab / Wet Lab interactive demo.
 Its task records stay in localStorage in the current browser. The earlier review
