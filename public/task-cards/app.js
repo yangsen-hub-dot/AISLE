@@ -49,7 +49,7 @@ function taskTags(task) {
 function renderCardArt(task) {
  if (!task.video) return `<img src="assets/${task.poster}" alt="" loading="lazy" decoding="async" width="760" height="475">`;
  const preview = task.poster ? `poster="assets/${task.poster}" preload="none" data-cover-preview` : 'preload="metadata"';
- return `<video src="assets/workflows/${task.video}#t=0.001" ${preview} muted playsinline aria-hidden="true" tabindex="-1"></video>`;
+ return `<video src="assets/workflows/${task.video}#t=0.001" ${preview} data-cover-preview muted playsinline aria-hidden="true" tabindex="-1"></video>`;
 }
 
 function renderCards() {
@@ -138,17 +138,17 @@ if(document.body.dataset.page==='catalog'){
  const search=document.getElementById('task-search');
  const chooser=document.querySelector('[data-map-chooser]');
  const cover=document.querySelector('[data-cover-preview]');
- const coverCard=cover.closest('.task-card');
+ const coverCard=cover?.closest('.task-card');
  const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
  const canHover=matchMedia('(any-hover: hover)');
- function syncCover(){
+ function syncCover(){if(!cover||!coverCard)return;
   const interacting=(canHover.matches&&coverCard.matches(':hover'))||coverCard.matches(':focus-within');
   if(!reducedMotion.matches&&!document.hidden&&coverCard.getClientRects().length&&interacting){
    if(cover.paused)cover.play().catch(()=>{});
   }else cover.pause();
  }
  for(const event of ['pointerenter','pointerleave','focusin','focusout']){
-  coverCard.addEventListener(event,()=>requestAnimationFrame(syncCover));
+  coverCard?.addEventListener(event,()=>requestAnimationFrame(syncCover));
  }
  document.addEventListener('catalog-view-change',syncCover);
  document.addEventListener('visibilitychange',syncCover);
