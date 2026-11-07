@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f3ecdf">
+  <meta name="theme-color" content="#0a1423">
   <title>Quantum Dot Formulation Optimisation · AISLE task card</title>
   <meta name="description" content="A proposed experimental optimisation task: use measured spectra and a limited query budget to find a quantum dot formulation with strong fluorescence at 600 nm.">
   <meta property="og:title" content="Quantum Dot Formulation Optimisation">
@@ -13,26 +13,21 @@
   <link rel="stylesheet" href="style.css?v=mondrian-6">
   <link rel="stylesheet" href="assets/quantum-dot.css?v=qd-cover-1">
   <link rel="stylesheet" href="assets/task-graphs.css?v=video-size-3">
-  <script src="assets/task-graphs.js?v=video-size-3" defer></script>
+  <script src="assets/task-graphs.js?v=task-detail-1" defer></script>
+  <link rel="stylesheet" href="assets/task-presentation.css?v=task-detail-1">
+  <link rel="stylesheet" href="assets/task-detail.css?v=task-detail-1">
+  <script src="assets/task-detail.js?v=task-detail-1" defer></script>
 </head>
-<body class="qd-page">
-  <header class="header wrap">
-    <a class="brand" href="../index.html" aria-label="AISLE home"><img class="brand-logo" src="../assets/brand/aisle-logo-white.svg" alt="AISLE logo" width="1226" height="222"></a>
-    <nav aria-label="Main navigation"><a href="../index.html">Home</a><a class="active" href="../tasks.html#task-cards">Tasks</a><a href="../leaderboard.html">Leaderboard</a></nav>
-  </header>
-  <main class="wrap">
+<body class="task-detail-page qd-page">
+  <main class="wrap task-detail-main">
     <a class="back-link qd-back" href="../tasks.html#task-quantum-dot">← Back to task cards</a>
     <section class="qd-hero" aria-labelledby="task-title">
       <div class="qd-hero-copy">
-        <div class="qd-kicker"><span class="qd-badge">Proposed task</span></div>
-        <h1 id="task-title">Quantum Dot<br>Formulation <em>Optimisation.</em></h1>
+        <p class="task-detail-label">Task 06 · Proposed task</p>
+        <h1 id="task-title">Quantum Dot Formulation <em>Optimisation</em></h1>
         <p class="qd-lede">Find the formulation with the strongest fluorescence at <strong>600 nm</strong>.</p>
         <a class="qd-link" href="#task-specification">Explore the task specification <span aria-hidden="true">↓</span></a>
       </div>
-      <aside class="qd-summary" aria-label="Task at a glance">
-        <div class="qd-target"><span>Target emission wavelength</span><strong>600 <small>nm</small></strong></div>
-        <dl class="qd-stats"><div><dt>Candidate formulations</dt><dd>48</dd></div><div><dt>Measured wells per formulation</dt><dd>2</dd></div><div><dt>Experimental query budget</dt><dd><i>K</i></dd></div></dl>
-      </aside>
     </section>
     <section class="qd-loop" aria-labelledby="loop-title">
       <div class="qd-section-top"><h2 id="loop-title">Experimental loop</h2></div>
@@ -49,6 +44,10 @@
         <li><span class="qd-step-number" aria-hidden="true">04</span><p>Submit one measured formulation.</p></li>
       </ol>
     </section>
+    <aside class="qd-summary" aria-label="Task at a glance">
+      <div class="qd-target"><span>Target emission wavelength</span><strong>600 <small>nm</small></strong></div>
+      <dl class="qd-stats"><div><dt>Candidate formulations</dt><dd>48</dd></div><div><dt>Measured wells per formulation</dt><dd>2</dd></div><div><dt>Experimental query budget</dt><dd><i>K</i></dd></div></dl>
+    </aside>
     <div class="qd-detail-layout" id="task-specification">
       <nav class="qd-toc" aria-label="Task specification sections"><a href="#search-space">01 · Formulation space</a><a href="#observations">02 · Observations</a><a href="#interaction">03 · Interaction rules</a><a href="#evaluation">04 · Evaluation</a></nav>
       <div class="qd-sections">

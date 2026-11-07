@@ -23,6 +23,7 @@ const catalogueFacts = {
  'buchwald-hartwig': { collection: 'proposed', status: 'Proposed task', environment: 'Measured-data replay', label: 'Budget', value: '4 experimental queries' },
 };
 taskEntries.forEach((task, index) => Object.assign(task, catalogueFacts[task.id], { number: String(index + 1).padStart(2, '0') }));
+const defaultFeature = taskEntries.find(task => task.id === 'solid');
 const steps = [
  {start:0,end:0,nav:'Overview',title:'From a target to the next experiment',copy:'Follow the model from a fixed target through the experiment and back to its next decision.'},
  {start:0,end:6.1,nav:'Propose',title:'Choose a formulation',copy:'The model selects volumes of A–D and sends formulation 01 to the liquid handler.'},
@@ -67,17 +68,17 @@ function caseMarkup() {
  </div>`;
 }
 function taskFeatureMarkup() {
- const options = taskEntries.map(task => `<option value="${task.id}" data-href="${task.href}" data-number="${task.number}"${task.id === 'spectral' ? ' selected' : ''}>${task.title}</option>`).join('');
+ const options = taskEntries.map(task => `<option value="${task.id}" data-href="${task.href}" data-number="${task.number}"${task === defaultFeature ? ' selected' : ''}>${task.title}</option>`).join('');
  return `<section class="task-map-feature" id="featured-case" aria-labelledby="featured-title">
    <div class="section-heading">
-     <p class="catalog-eyebrow">Featured case <span aria-hidden="true">·</span> <span data-feature-number>Task 04</span></p>
-     <h2 id="featured-title" data-feature-heading>Infer a hidden chemical transition.</h2>
+     <p class="catalog-eyebrow">Featured case <span aria-hidden="true">·</span> <span data-feature-number>Task ${defaultFeature.number}</span></p>
+     <h2 id="featured-title" data-feature-heading>${defaultFeature.title}</h2>
    </div>
    <div data-feature-map></div>
    <div class="task-map-feature-picker">
      <label for="feature-task">Explore a workflow</label>
      <select id="feature-task" data-map-chooser>${options}</select>
-     <a class="small-link" data-feature-detail href="spectral-inference.html">View task details <span aria-hidden="true">↗</span></a>
+     <a class="small-link" data-feature-detail href="${defaultFeature.href}">View task details <span aria-hidden="true">↗</span></a>
    </div>
  </section>`;
 }
@@ -140,14 +141,25 @@ const catalog = `<main class="wrap catalogue-main">
  </section>
  <p class="catalog-protocols"><a class="small-link" href="../tasks.html#task-protocols">Protocols &amp; scoring <span aria-hidden="true">↗</span></a></p>
 </main>`;
-const detail = '<main class="wrap"><section class="detail-intro"><a class="back-link" href="../tasks.html#task-cards">← Back to task cards</a><h1 class="detail-title">Colour matching</h1></section><section data-task-map="colour" aria-label="Colour-matching task map"></section><details class="task-map-extra"><summary>Interactive workflow</summary>'+caseMarkup()+'</details></main>';
+function taskDetailHeading(task, back) {
+ return `<section class="detail-intro">
+  ${back}
+  <p class="task-detail-label">Task ${task.number} · ${task.status}</p>
+  <h1 class="detail-title">${task.title}</h1>
+ </section>`;
+}
+const taskBack = '<a class="back-link" href="../tasks.html#task-cards">← Back to task cards</a>';
+const detail = `<main class="wrap task-detail-main">
+ ${taskDetailHeading(taskEntries[0], taskBack)}
+ <section data-task-map="colour" aria-label="Colour-matching task map"></section>
+ <details class="task-map-extra"><summary>Interactive workflow</summary>${caseMarkup()}</details>
+</main>`;
 function videoTaskMarkup() {
  const id = document.body.dataset.task || new URLSearchParams(location.search).get('task');
  const task = taskEntries.find(entry => entry.id === id && entry.scene);
- const back = '<a class="back-link" href="../tasks.html#task-cards">← Back to task cards</a>';
- if (!task) return '<main class="wrap detail-intro">'+back+'<h1 class="detail-title">Case not found</h1></main>';
+ if (!task) return '<main class="wrap task-detail-main"><section class="detail-intro">'+taskBack+'<h1 class="detail-title">Case not found</h1></section></main>';
  document.title = task.title + ' · AISLE task card';
- return interactiveTaskMarkup(task,back);
+ return interactiveTaskMarkup(task, taskDetailHeading(task, taskBack));
 
 }
 if (embedded) {
@@ -155,7 +167,7 @@ if (embedded) {
  app.innerHTML = catalog;
  for (const link of app.querySelectorAll('a[href]')) link.target = '_top';
 } else {
- app.innerHTML = header + (isVideoTask ? videoTaskMarkup() : isDetail ? detail : catalog)
+ app.innerHTML = (isVideoTask ? videoTaskMarkup() : isDetail ? detail : header + catalog)
    + footer + (isDetail ? dialog : '');
 }
 if (isVideoTask) {
@@ -285,7 +297,8 @@ if(document.body.dataset.page==='catalog'){
  if(embedded){try{if(window.parent.location.origin===location.origin)stateWindow=window.parent;}catch{}}
  const initial=new URL(stateWindow.location.href).searchParams;
  let collection=filterButtons.some(button=>button.dataset.taskFilter===initial.get('collection'))?initial.get('collection'):'all';
- let selected=taskEntries.some(task=>task.id===initial.get('task'))?initial.get('task'):'spectral';
+ const featureFrom=params=>taskEntries.find(task=>task.id===params.get('task'))?.id??defaultFeature.id;
+ let selected=featureFrom(initial);
  let view='';
  chooser.value=selected;
  search.value=(initial.get('q')||'').slice(0,160);
@@ -295,7 +308,7 @@ if(document.body.dataset.page==='catalog'){
  function saveState(){
   const url=new URL(stateWindow.location.href);
   if(!restoringHistory){
-   for(const [key,value] of Object.entries({task:selected==='spectral'?'':selected,collection:collection==='all'?'':collection,q:search.value.trim(),view})){
+   for(const [key,value] of Object.entries({task:selected===defaultFeature.id?'':selected,collection:collection==='all'?'':collection,q:search.value.trim(),view})){
     if(value)url.searchParams.set(key,value);else url.searchParams.delete(key);
    }
    stateWindow.history.replaceState(stateWindow.history.state,'',url);
@@ -361,7 +374,7 @@ if(document.body.dataset.page==='catalog'){
   restoringHistory=true;
   try{
    collection=filterButtons.some(button=>button.dataset.taskFilter===params.get('collection'))?params.get('collection'):'all';
-   const nextTask=taskEntries.some(task=>task.id===params.get('task'))?params.get('task'):'spectral';
+   const nextTask=featureFrom(params);
    search.value=(params.get('q')||'').slice(0,160);
    switchView(initialView(params),false);
    filterTasks(false);

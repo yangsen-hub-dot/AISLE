@@ -1,7 +1,7 @@
-function interactiveTaskMarkup(task,back){
+function interactiveTaskMarkup(task,heading){
  const stages=task.stages.map((s,i)=>'<button type="button" data-stage="'+i+'" aria-pressed="'+(i===0)+'">'+s.label+'</button>').join('');
- return `<main class="wrap">
-  <section class="detail-intro">${back}<h1 class="detail-title">${task.title}</h1></section>
+ return `<main class="wrap task-detail-main">
+  ${heading}
   <section data-task-map="${task.id}" aria-label="${task.title} task map"></section>
   <details class="task-map-extra"><summary>Interactive 3D walkthrough</summary>
   <section class="case interactive-case" data-scene="${task.id}">
