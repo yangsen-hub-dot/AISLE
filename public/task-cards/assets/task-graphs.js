@@ -1,6 +1,6 @@
 (() => {
   // Each task defines its own relationships and anchors to the corresponding evidence.
-  // Node entries are [label, x%, y%, video seconds or protocol anchor, description, rationale].
+  // Node entries are [label, x%, y%, chapter or anchor, description, rationale, optional protocol anchor].
   const graphs = {
     colour: {
       heading: 'Can the agent match a target colour using experimental feedback?',
@@ -74,32 +74,32 @@
     },
     'quantum-dot': {
       heading: 'Which formulation gives the strongest fluorescence at 600 nm?',
-      image: 'quantum-dot-workflow-cover.webp',
-      source: 'Proposed task · Workflow illustration',
-      illustration: 'Structures and spectra are schematic.',
+      video: 'quantum-dot.mp4', poster: 'quantum-dot-workflow-cover.webp?v=labels-1', duration: 74,
+      source: 'Proposed task · Measured plate data · Schematic spectra · Example agents',
       nodes: [
-        ['600 nm', 51, 43, 'task-specification', 'Use fluorescence at 600 nm as the target.', 'Give every formulation the same basis for comparison.'],
-        ['Formulation', 26, 12, 'search-space', 'Choose one of 48 recorded combinations of pH, MPA, and Na₂S.', 'Decide which formulation to investigate next.'],
-        ['Paired wells', 76, 24, 'observations', 'Retrieve the measured spectra from both wells for the formulation.', 'Check how consistent the two measurements are.'],
-        ['Spectra', 25, 63, 'observations', 'Read the absorbance and fluorescence spectra.', 'Find the fluorescence signal at 600 nm.'],
-        ['Next query', 75, 72, 'interaction', 'Use the measured spectra to select the next formulation.', 'Look for stronger fluorescence within the query budget.'],
-        ['Score', 42, 89, 'evaluation', 'Average the 600 nm fluorescence measured in both wells.', 'See how close the submission comes to the best measured formulation on the plate.'],
+        ['600 nm', 51, 43, 0, 'Use fluorescence at 600 nm as the target.', 'Give every formulation the same basis for comparison.', 'task-specification'],
+        ['Formulation', 26, 12, 9, 'Choose one of 48 recorded combinations of pH, MPA, and Na₂S.', 'Decide which formulation to investigate next.', 'search-space'],
+        ['Paired wells', 76, 24, 16, 'Retrieve the measured spectra from both wells for the formulation.', 'Check how consistent the two measurements are.', 'observations'],
+        ['Spectra', 25, 63, 24, 'Find the 600 nm reading in each well’s fluorescence spectrum.', 'Use the same wavelength to compare tested formulations.', 'observations'],
+        ['Next query', 75, 72, 32, 'Use the measured spectra to select the next formulation.', 'Look for stronger fluorescence within the query budget.', 'interaction'],
+        ['Score', 42, 89, 54, 'Submit a tested formulation. The evaluator averages its two readings at 600 nm.', 'Compare the submission with the best measured formulation on the plate.', 'evaluation'],
       ],
+      chapters: [[0,0],[9,1],[16,2],[24,3],[32,4],[46,3],[54,5]],
       edges: [[0,1],[1,2],[2,3],[3,4],[4,1,'feedback'],[3,5],[0,5]],
     },
     'buchwald-hartwig': {
       heading: 'Can a model find conditions for a successful C–N coupling within four experiments?',
-      image: 'buchwald-hartwig-workflow-cover.webp',
-      source: 'Proposed task · Workflow illustration',
-      illustration: 'The displayed yields are measured examples in an illustrative order.',
+      video: 'buchwald-hartwig.mp4', poster: 'buchwald-hartwig-opening-frame.webp', duration: 80,
+      source: 'Proposed task · Measured yields in an illustrative sequence · Schematic spectra · Example agents',
       nodes: [
-        ['C–N coupling', 49, 40, 'reaction-target', 'Identify the reactants and the target C–N bond.', 'Compare different conditions for the same reaction.'],
-        ['Conditions', 26, 12, 'reaction-target', 'Choose a catalyst, base, and solvent from the available options.', 'Define the reaction conditions to test next.'],
-        ['Experiment', 77, 22, 'interaction', 'Use one of the four queries to test a condition.', 'Get measured feedback within the experiment limit.'],
-        ['Yield', 25, 65, 'observations', 'Read the measured yield for the selected condition.', 'Check whether the result exceeds the 10% success threshold.'],
-        ['Revise', 76, 68, 'interaction', 'Use the yield feedback to choose the next conditions.', 'Improve the chance of finding a successful condition before the budget runs out.'],
-        ['Success', 52, 89, 'evaluation', 'Check whether any tested condition exceeded 10% yield.', 'Decide whether the search succeeded within four experiments.'],
+        ['C–N coupling', 49, 40, 0, 'Identify the reactants and the target C–N bond.', 'Compare different conditions for the same reaction.', 'reaction-target'],
+        ['Conditions', 26, 12, 9, 'Choose a catalyst, base, and solvent from the available options.', 'Define the reaction conditions to test next.', 'reaction-target'],
+        ['Experiment', 77, 22, 14, 'Use one of the four queries to test a condition.', 'Get measured feedback within the experiment limit.', 'interaction'],
+        ['Yield', 25, 65, 16, 'Read the measured yield for the selected condition.', 'Check whether the result exceeds the 10% success threshold.', 'observations'],
+        ['Revise', 76, 68, 23, 'Use the yield feedback to choose the next conditions.', 'Improve the chance of finding a successful condition before the budget runs out.', 'interaction'],
+        ['Success', 52, 89, 65, 'Check whether any tested condition exceeded 10% yield.', 'Decide whether the search succeeded within four experiments.', 'evaluation'],
       ],
+      chapters: [[0,0],[9,1],[14,2],[16,3],[23,4],[28,2],[30,3],[37,4],[42,2],[44,3],[51,4],[56,2],[58,3],[65,5]],
       edges: [[0,1],[1,2],[2,3],[3,4],[4,1,'feedback'],[3,5]],
     },
   };
@@ -131,7 +131,8 @@
     const detailHeading = host.closest('main')?.querySelector('[data-detail-case-heading]');
     if (detailHeading) detailHeading.textContent = task.heading;
     const poster = task.poster;
-    const existingFigure = detailUrl ? null : host.querySelector('figure');
+    const existingFigure = task.video || detailUrl ? null : host.querySelector('figure');
+    const hasProtocol = task.nodes.some(node => node[6] || typeof node[3] === 'string');
     const nodes = task.nodes.map(([label,x,y], index) => `
       <button class="task-map-node" type="button" data-map-node="${index}" style="--node-x:${x}%;--node-y:${y}%" aria-pressed="false">
         <span class="task-map-orb" aria-hidden="true">${index === 0 ? label : ''}</span>
@@ -167,7 +168,7 @@
                 <dd data-map-reason></dd>
               </dl>
             </div>
-            ${task.image ? '<a data-map-protocol>Read protocol ↗</a>' : ''}
+            ${hasProtocol ? '<a data-map-protocol>Read protocol ↗</a>' : ''}
           </aside>
         </div>
         <div class="task-map-media">
@@ -208,18 +209,20 @@
     const protocol = host.querySelector('[data-map-protocol]');
     const video = host.querySelector('video');
     let active = -1;
-    function select(index) {
-      if (index === active) return;
+    let activeChapter;
+    function select(index, chapter = task.nodes[index][3]) {
+      if (index === active && chapter === activeChapter) return;
       active = index;
-      const [name,,, destination, description, rationale] = task.nodes[index];
+      activeChapter = chapter;
+      const [name,,, destination, description, rationale, anchor] = task.nodes[index];
       buttons.forEach((button, i) => button.setAttribute('aria-pressed', String(i === index)));
       paths.forEach(path => path.classList.toggle('current',
         Number(path.dataset.from) === index || Number(path.dataset.to) === index));
       label.textContent = name;
-      kicker.textContent = task.video ? `Chapter · ${clock(destination)}` : 'Workflow step';
+      kicker.textContent = task.video ? `Chapter · ${clock(chapter)}` : 'Workflow step';
       copy.textContent = description;
       reason.textContent = rationale;
-      if (protocol) protocol.href = detailUrl + '#' + destination;
+      if (protocol) protocol.href = detailUrl + '#' + (anchor || destination);
     }
     select(0);
     if (!video) {
@@ -236,6 +239,7 @@
     const pauseIcon = host.querySelector('[data-map-pause-icon]');
     const expand = host.querySelector('[data-map-expand]');
     const error = host.querySelector('.task-map-error');
+    const chapters = task.chapters || task.nodes.map((node, index) => [node[3], index]);
     let pendingSeek = null;
     function duration() {
       return Number.isFinite(video.duration) && video.duration > 0 ? video.duration : task.duration;
@@ -251,7 +255,8 @@
       playLabel.textContent = video.paused ? video.ended ? 'Replay case' : 'Play case' : 'Pause';
       playIcon.hidden = !video.paused;
       pauseIcon.hidden = video.paused;
-      select(Math.max(0, task.nodes.findLastIndex(node => node[3] <= position + .015)));
+      const [chapter, index] = chapters.findLast(([time]) => time <= position + .015) || chapters[0];
+      select(index, chapter);
     }
     function seek(position) {
       position = Math.max(0, Math.min(position, duration()));

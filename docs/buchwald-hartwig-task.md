@@ -1,7 +1,7 @@
 # Buchwald–Hartwig task card
 
 Task 07 is a proposed experimental optimisation task in the task catalogue,
-with a static workflow illustration and a separate English specification.
+with a workflow illustration, a guided video and an English specification.
 It does not add a runnable evaluator or alter data/results.json.
 
 ## Artwork provenance
