@@ -214,7 +214,7 @@ if(document.body.dataset.page==='catalog'){
  function initialView(params){
   if(!embedded && taskEntries.some(task=>location.hash===`#task-${task.id}`))return 'cards';
   if(params.get('view')==='list')return 'list';
-  return params.get('view')==='cards'||params.has('q')||params.has('collection')?'cards':'';
+  return 'cards';
  }
  for(const [mode,button] of Object.entries(modes))button.addEventListener('click',()=>switchView(mode));
  search.addEventListener('input',()=>filterTasks());
