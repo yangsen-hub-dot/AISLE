@@ -67,15 +67,18 @@ function caseMarkup() {
  </div>`;
 }
 function taskFeatureMarkup() {
- const options = taskEntries.map(task => `<option value="${task.id}" data-href="${task.href}"${task.id === 'spectral' ? ' selected' : ''}>${task.title}</option>`).join('');
+ const options = taskEntries.map(task => `<option value="${task.id}" data-href="${task.href}" data-number="${task.number}"${task.id === 'spectral' ? ' selected' : ''}>${task.title}</option>`).join('');
  return `<section class="task-map-feature" id="featured-case" aria-labelledby="featured-title">
+   <div class="section-heading">
+     <p class="catalog-eyebrow">Featured case <span aria-hidden="true">·</span> <span data-feature-number>Task 04</span></p>
+     <h2 id="featured-title" data-feature-heading>Infer a hidden chemical transition.</h2>
+   </div>
+   <div data-feature-map></div>
    <div class="task-map-feature-picker">
      <label for="feature-task">Explore a workflow</label>
      <select id="feature-task" data-map-chooser>${options}</select>
      <a class="small-link" data-feature-detail href="spectral-inference.html">View task details <span aria-hidden="true">↗</span></a>
    </div>
-   <div class="section-heading"><h2 id="featured-title" data-feature-heading>Infer a hidden chemical transition.</h2></div>
-   <div data-feature-map></div>
  </section>`;
 }
 
@@ -108,12 +111,16 @@ function renderTaskList() {
 
 const catalog = `<main class="wrap catalogue-main">
  <section class="catalog-intro" aria-labelledby="catalog-title">
-   <div><div class="catalog-eyebrow">THE AISLE TASK LIBRARY <span>${taskEntries.length} tasks</span></div><h1 id="catalog-title" class="catalog-title">Explore <em>scientific tasks.</em></h1><p>From a scientific question to experimental feedback.<br>Explore the workflows, decisions and criteria behind each task.</p></div>
-   <div class="catalog-intro-links"><a class="catalog-browse" href="../tasks.html#task-library">Browse all tasks <span aria-hidden="true">↓</span></a><a class="small-link" href="../tasks.html#task-protocols">Protocols &amp; scoring ↗</a></div>
+   <div><h1 id="catalog-title" class="catalog-title">Scientific Tasks</h1><p>Explore how AI agents plan experiments, interpret observations, and revise decisions.</p></div>
  </section>
  ${taskFeatureMarkup()}
  <section class="catalog-section" id="task-library" aria-labelledby="all-card-title">
-   <div class="catalog-head"><div><h2 id="all-card-title">Find your next scientific challenge.</h2><p>Browse the benchmark, explore PSI-Bench or discover proposed tasks.</p></div><span id="task-result-count" role="status" aria-live="polite" aria-atomic="true">${taskEntries.length} tasks</span></div>
+   <h2 id="all-card-title">Explore tasks</h2>
+   <div class="catalog-views" role="group" aria-label="Task browsing mode">
+     <button type="button" id="visual-tab" aria-pressed="false" aria-controls="visual-panel"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="7" height="6" rx="1"/><rect x="14" y="4" width="7" height="6" rx="1"/><rect x="3" y="14" width="7" height="6" rx="1"/><rect x="14" y="14" width="7" height="6" rx="1"/></svg><span>Cards</span><span aria-hidden="true">↗</span></button>
+     <button type="button" id="list-tab" aria-pressed="false" aria-controls="list-panel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h1M3 12h1M3 18h1"/></svg><span>List</span><span aria-hidden="true">↗</span></button>
+   </div>
+   <div id="task-results" hidden>
    <div class="catalog-toolbar">
      <div class="task-filters" role="group" aria-label="Filter tasks by collection">
        <button type="button" data-task-filter="all" aria-pressed="true">All tasks <span>7</span></button>
@@ -122,17 +129,16 @@ const catalog = `<main class="wrap catalogue-main">
        <button type="button" data-task-filter="proposed" aria-pressed="false">Proposed <span>2</span></button>
      </div>
      <div class="catalog-tools"><label class="task-search"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4 4"/></svg><input id="task-search" type="search" placeholder="Search tasks…" aria-label="Search tasks" autocomplete="off" maxlength="160"></label>
-       <div class="view-tabs" role="tablist" aria-label="Task browsing mode">
-         <button type="button" id="visual-tab" role="tab" aria-selected="true" aria-controls="visual-panel">Cards</button>
-         <button type="button" id="list-tab" role="tab" aria-selected="false" aria-controls="list-panel" tabindex="-1">List</button>
-       </div>
+       <span id="task-result-count" role="status" aria-atomic="true">${taskEntries.length} tasks</span>
      </div>
    </div>
-   <section id="visual-panel" role="tabpanel" aria-labelledby="visual-tab"><div class="card-grid">${renderCards()}</div></section>
-   <section id="list-panel" role="tabpanel" aria-labelledby="list-tab" hidden>${renderTaskList()}</section>
+   <section id="visual-panel" aria-labelledby="visual-tab" hidden><div class="card-grid">${renderCards()}</div></section>
+   <section id="list-panel" aria-labelledby="list-tab" hidden>${renderTaskList()}</section>
    <div class="catalog-empty" id="task-empty" hidden><h3>No tasks found</h3><p>Try a different keyword or browse all seven tasks.</p><button type="button" id="clear-task-filters">Clear search &amp; filters</button></div>
    <p class="catalog-footnote">Proposed tasks are workflow proposals and are not included in AISLE benchmark scores.</p>
+   </div>
  </section>
+ <p class="catalog-protocols"><a class="small-link" href="../tasks.html#task-protocols">Protocols &amp; scoring <span aria-hidden="true">↗</span></a></p>
 </main>`;
 const detail = '<main class="wrap"><section class="detail-intro"><a class="back-link" href="../tasks.html#task-cards">← Back to task cards</a><h1 class="detail-title">Colour matching</h1></section><section data-task-map="colour" aria-label="Colour-matching task map"></section><details class="task-map-extra"><summary>Interactive workflow</summary>'+caseMarkup()+'</details></main>';
 function videoTaskMarkup() {
@@ -269,7 +275,8 @@ film.addEventListener('error',()=>document.getElementById('media-error').hidden=
 }
 
 if(document.body.dataset.page==='catalog'){
- const tabs=[document.getElementById('visual-tab'),document.getElementById('list-tab')];
+ const modes={cards:document.getElementById('visual-tab'),list:document.getElementById('list-tab')};
+ const results=document.getElementById('task-results');
  const search=document.getElementById('task-search');
  const filterButtons=[...document.querySelectorAll('[data-task-filter]')];
  const chooser=document.querySelector('[data-map-chooser]');
@@ -279,6 +286,7 @@ if(document.body.dataset.page==='catalog'){
  const initial=new URL(stateWindow.location.href).searchParams;
  let collection=filterButtons.some(button=>button.dataset.taskFilter===initial.get('collection'))?initial.get('collection'):'all';
  let selected=taskEntries.some(task=>task.id===initial.get('task'))?initial.get('task'):'spectral';
+ let view='';
  chooser.value=selected;
  search.value=(initial.get('q')||'').slice(0,160);
  const normalize=value=>value.normalize('NFKC').toLowerCase().replace(/[–—-]/g,' ');
@@ -287,7 +295,7 @@ if(document.body.dataset.page==='catalog'){
  function saveState(){
   const url=new URL(stateWindow.location.href);
   if(!restoringHistory){
-   for(const [key,value] of Object.entries({task:selected==='spectral'?'':selected,collection:collection==='all'?'':collection,q:search.value.trim(),view:tabs[1].getAttribute('aria-selected')==='true'?'list':''})){
+   for(const [key,value] of Object.entries({task:selected==='spectral'?'':selected,collection:collection==='all'?'':collection,q:search.value.trim(),view})){
     if(value)url.searchParams.set(key,value);else url.searchParams.delete(key);
    }
    stateWindow.history.replaceState(stateWindow.history.state,'',url);
@@ -318,19 +326,23 @@ if(document.body.dataset.page==='catalog'){
   document.getElementById('task-empty').hidden=matches.size>0;
   if(persist)saveState();
  }
- function switchView(tab,persist=true){
-  tabs.forEach(t=>{const selected=t===tab;t.setAttribute('aria-selected',String(selected));t.tabIndex=selected?0:-1;document.getElementById(t.getAttribute('aria-controls')).hidden=!selected});
-  document.dispatchEvent(new CustomEvent('catalog-view-change',{detail:{visual:tab===tabs[0]}}));
+ function switchView(mode,persist=true){
+  view=mode;
+  results.hidden=!mode;
+  for(const [name,button] of Object.entries(modes)){
+   const active=name===mode;
+   button.setAttribute('aria-pressed',String(active));
+   document.getElementById(button.getAttribute('aria-controls')).hidden=!active;
+  }
+  document.dispatchEvent(new CustomEvent('catalog-view-change',{detail:{visual:mode==='cards'}}));
   if(persist)saveState();
  }
- tabs.forEach((tab,i)=>{
-  tab.addEventListener('click',()=>switchView(tab));
-  tab.addEventListener('keydown',event=>{
-   if(['ArrowLeft','ArrowRight','Home','End'].includes(event.key)){
-    event.preventDefault();const target=event.key==='Home'?tabs[0]:event.key==='End'?tabs[1]:tabs[1-i];switchView(target);target.focus();
-   }
-  });
- });
+ function initialView(params){
+  if(!embedded && taskEntries.some(task=>location.hash===`#task-${task.id}`))return 'cards';
+  if(params.get('view')==='list')return 'list';
+  return params.get('view')==='cards'||params.has('q')||params.has('collection')?'cards':'';
+ }
+ for(const [mode,button] of Object.entries(modes))button.addEventListener('click',()=>switchView(mode));
  search.addEventListener('input',()=>filterTasks());
  filterButtons.forEach(button=>button.addEventListener('click',()=>{collection=button.dataset.taskFilter;filterTasks();}));
  document.getElementById('clear-task-filters').addEventListener('click',()=>{collection='all';search.value='';filterTasks();search.focus();});
@@ -343,7 +355,7 @@ if(document.body.dataset.page==='catalog'){
   heading.tabIndex=-1;heading.focus({preventScroll:true});
  }));
  document.addEventListener('catalog-feature-change',event=>{selected=event.detail.task;markPreview();saveState();});
- document.addEventListener('catalog-reveal-task',()=>{collection='all';search.value='';switchView(tabs[0],false);filterTasks();});
+ document.addEventListener('catalog-reveal-task',()=>{collection='all';search.value='';switchView('cards',false);filterTasks();});
  stateWindow.addEventListener('popstate',()=>{
   const params=new URL(stateWindow.location.href).searchParams;
   restoringHistory=true;
@@ -351,13 +363,13 @@ if(document.body.dataset.page==='catalog'){
    collection=filterButtons.some(button=>button.dataset.taskFilter===params.get('collection'))?params.get('collection'):'all';
    const nextTask=taskEntries.some(task=>task.id===params.get('task'))?params.get('task'):'spectral';
    search.value=(params.get('q')||'').slice(0,160);
-   switchView(params.get('view')==='list'?tabs[1]:tabs[0],false);
+   switchView(initialView(params),false);
    filterTasks(false);
    if(chooser.value!==nextTask){chooser.value=nextTask;chooser.dispatchEvent(new Event('change'));}
    selected=nextTask;markPreview();saveState();
   }finally{restoringHistory=false;}
  });
- switchView(initial.get('view')==='list'?tabs[1]:tabs[0],false);
+ switchView(initialView(initial),false);
  filterTasks(false);
  markPreview();
 }
