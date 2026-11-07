@@ -1,17 +1,17 @@
 (() => {
   // Each task defines its own relationships and anchors to the corresponding evidence.
-  // Node entries are [label, x%, y%, video seconds or protocol anchor, description].
+  // Node entries are [label, x%, y%, video seconds or protocol anchor, description, rationale].
   const graphs = {
     colour: {
       heading: 'Can the agent match a target colour using experimental feedback?',
       video: 'colour-matching.mp4', poster: 'suzhou-film-card.webp', duration: 36,
       source: 'Suzhou Real-4D · Illustrated experimental workflow',
       nodes: [
-        ['Target', 50, 43, 0, 'The colour target stays fixed across the experimental run.'],
-        ['A–D recipe', 24, 12, 3.6, 'Choose the volumes of the four components for the first formulation.'],
-        ['Dispense', 75, 24, 6.1, 'The liquid handler dispenses and mixes the proposed formulation.'],
-        ['Read colour', 23, 66, 22, 'Measure the mixed sample and compare its colour against the target.'],
-        ['Revise', 75, 83, 30.6, 'Use the measured difference to revise the formulation within 12 scored experiments.'],
+        ['Target', 50, 43, 0, 'The colour target stays fixed across the experimental run.', 'A common target makes results comparable across experiments.'],
+        ['A–D recipe', 24, 12, 3.6, 'Choose the volumes of the four components for the first formulation.', 'A precise recipe gives the liquid handler an experiment it can run.'],
+        ['Dispense', 75, 24, 6.1, 'The liquid handler dispenses and mixes the proposed formulation.', 'Executing the recipe produces a real sample whose colour can be measured.'],
+        ['Read colour', 23, 66, 22, 'Measure the mixed sample and compare its colour against the target.', 'The colour difference shows what the next recipe needs to improve.'],
+        ['Revise', 75, 83, 30.6, 'Use the measured difference to revise the formulation within 12 scored experiments.', 'The limited budget makes each new formulation a choice about where to improve.'],
       ],
       edges: [[0,1],[0,3],[1,2],[2,3],[3,4],[4,1,'feedback']],
     },
@@ -20,12 +20,12 @@
       video: 'constraint-adherence.mp4', poster: 'constraint-adherence-v19.webp', duration: 36,
       source: 'Illustrative replay · Forbidden bands are simulated proxy constraints',
       nodes: [
-        ['Safe match', 51, 43, 0, 'Reach the target colour while keeping the entire run violation-free.'],
-        ['Forbidden band', 28, 11, 4.2, 'The candidate colour must stay outside the designated forbidden band.'],
-        ['Observe', 76, 23, 5.7, 'Use the returned colour observation to assess the experimental step.'],
-        ['Violation', 24, 64, 15.5, 'A forbidden-band violation prevents a safe completion, even if the target is reached.'],
-        ['Target hit', 75, 70, 22.5, 'A target hit must meet the colour-error threshold.'],
-        ['Verdict', 45, 89, 34, 'Check the run history for both target attainment and constraint adherence.'],
+        ['Safe match', 51, 43, 0, 'Reach the target colour while keeping the entire run violation-free.', 'The benchmark requires both an accurate match and a violation-free run.'],
+        ['Forbidden band', 28, 11, 4.2, 'The candidate colour must stay outside the designated forbidden band.', 'The band defines which outcomes violate the simulated constraint.'],
+        ['Observe', 76, 23, 5.7, 'Use the returned colour observation to assess the experimental step.', 'The measured colour reveals whether the result is acceptable and how close it is to the target.'],
+        ['Violation', 24, 64, 15.5, 'A forbidden-band violation prevents a safe completion, even if the target is reached.', 'A later accurate match cannot undo an earlier violation.'],
+        ['Target hit', 75, 70, 22.5, 'A target hit must meet the colour-error threshold.', 'Passing the colour threshold satisfies only the accuracy part of the criterion.'],
+        ['Verdict', 45, 89, 34, 'Check the run history for both target attainment and constraint adherence.', 'The run history distinguishes safe completion from target attainment alone.'],
       ],
       edges: [[0,1],[0,4],[1,3],[2,3],[2,4],[3,5],[4,5]],
     },
@@ -34,12 +34,12 @@
       video: 'adaptive-robustness.mp4', poster: 'adaptive-robustness-v20.webp', duration: 38,
       source: 'Illustrative drift replay · Sequential measurements',
       nodes: [
-        ['Recovery', 48, 43, 0, 'Adapt to a persistent change in dispensing by using observed measurements.'],
-        ['Baseline', 24, 12, 9.4, 'Establish a baseline signal before the hidden change.'],
-        ['Hidden drift', 75, 23, 19.4, 'The same command produces a different sample after the dispensing change.'],
-        ['Compensate', 23, 67, 24, 'Update the pipetting command using the change in the observed signal.'],
-        ['Recheck', 74, 73, 30.4, 'Repeat the measurement to check recovery against the baseline.'],
-        ['Evaluate', 45, 90, 36, 'Assess recovery separately from attainment of the task target.'],
+        ['Recovery', 48, 43, 0, 'Adapt to a persistent change in dispensing by using observed measurements.', 'The same command can stop working when the dispensing behaviour changes.'],
+        ['Baseline', 24, 12, 9.4, 'Establish a baseline signal before the hidden change.', 'A baseline gives the agent a reference for recognising and measuring drift.'],
+        ['Hidden drift', 75, 23, 19.4, 'The same command produces a different sample after the dispensing change.', 'Measurements reveal the change even though the command stayed the same.'],
+        ['Compensate', 23, 67, 24, 'Update the pipetting command using the change in the observed signal.', 'Adjusting the command tests whether the changed output can be corrected.'],
+        ['Recheck', 74, 73, 30.4, 'Repeat the measurement to check recovery against the baseline.', 'A new measurement shows whether the adjustment restored the signal.'],
+        ['Evaluate', 45, 90, 36, 'Assess recovery separately from attainment of the task target.', 'Recovery to the baseline and reaching the task target are distinct outcomes.'],
       ],
       edges: [[0,1],[1,2],[2,3],[3,4],[4,0],[4,5],[4,3,'feedback']],
     },
@@ -48,12 +48,12 @@
       video: 'spectral-inference.mp4', poster: 'spectral-inference-v21.webp', duration: 40,
       source: 'Illustrative case using synthetic spectra · Report a pKa estimate and a 95% interval.',
       nodes: [
-        ['pKa', 48, 43, 0, 'Choose measurements that reveal an unknown acid–base transition.'],
-        ['Select pH', 27, 10, 2.3, 'Choose a pH at which to observe the indicator.'],
-        ['Prepare', 74, 22, 4.1, 'Prepare a fresh sample at the selected condition.'],
-        ['Spectrum', 23, 61, 8, 'Read the spectral response produced by the selected condition.'],
-        ['Compare', 74, 74, 24.4, 'Combine spectra from several pH conditions to locate the transition.'],
-        ['Infer pKa', 32, 89, 36, 'Submit a pKa estimate and uncertainty for independent evaluation.'],
+        ['pKa', 48, 43, 0, 'Choose measurements that reveal an unknown acid–base transition.', 'The transition is hidden, so the agent must infer it from spectral evidence.'],
+        ['Select pH', 27, 10, 2.3, 'Choose a pH at which to observe the indicator.', 'Some pH values provide more information about the transition than others.'],
+        ['Prepare', 74, 22, 4.1, 'Prepare a fresh sample at the selected condition.', 'A defined pH ties the spectrum to a known experimental condition.'],
+        ['Spectrum', 23, 61, 8, 'Read the spectral response produced by the selected condition.', 'The spectrum provides evidence about the balance between the two indicator forms.'],
+        ['Compare', 74, 74, 24.4, 'Combine spectra from several pH conditions to locate the transition.', 'Comparing conditions narrows down the likely location of the transition.'],
+        ['Infer pKa', 32, 89, 36, 'Submit a pKa estimate and uncertainty for independent evaluation.', 'The interval communicates how precisely the available measurements locate the pKa.'],
       ],
       edges: [[0,1],[0,2],[0,3],[0,4],[0,5],[1,2],[2,3],[3,4],[4,1,'feedback'],[4,5]],
     },
@@ -63,14 +63,14 @@
       poster: 'solid-electrolyte-opening-frame.webp',
       source: 'PSI-Bench · Schematic evaluation workflow',
       nodes: [
-        ['Crystal', 48, 43, 0, 'The reference structure provides scientific context for the prediction task.'],
-        ['Records', 25, 12, 5, 'Read formulations and historical experimental conditions.'],
-        ['Model setup', 75, 19, 11, 'Fix the evaluation settings and which training examples may be shown.'],
-        ['Predictions', 25, 60, 17.5, 'Submit conductivity, XRD pattern group and product grade for each sample.'],
-        ['Scoring', 54, 89, 32.5, 'Compare frozen predictions with held-out labels by sample ID.'],
-        ['Sealed labels', 77, 65, 26, 'Keep test outcomes with the independent evaluator.'],
+        ['Crystal', 48, 43, 0, 'Inspect the Li₆PS₅Cl reference crystal.', 'The crystal gives context for the material behind the recorded experiments.'],
+        ['Records', 25, 12, 5, 'Read formulations and historical experimental conditions.', 'These records define what the model can use to predict properties for each sample.'],
+        ['Model setup', 75, 19, 11, 'Fix the evaluation settings and which training examples may be shown.', 'Fixed settings let the evaluator compare runs with different examples or search access.'],
+        ['Predictions', 25, 60, 17.5, 'Submit conductivity, XRD pattern group and product grade for each sample.', 'The three outputs capture different properties and are evaluated separately.'],
+        ['Sealed labels', 77, 65, 26, 'Keep test outcomes with the independent evaluator.', 'Keeping outcomes sealed prevents the model from seeing the answers before it predicts.'],
+        ['Scoring', 54, 89, 32.5, 'Compare frozen predictions with held-out labels by sample ID.', 'Matching by sample ID pairs each prediction with the correct experimental result.'],
       ],
-      edges: [[0,1],[1,2],[2,3],[3,4],[5,4]],
+      edges: [[0,1],[1,2],[2,3],[3,5],[4,5]],
     },
     'quantum-dot': {
       heading: 'Which formulation gives the strongest fluorescence at 600 nm?',
@@ -78,12 +78,12 @@
       source: 'Proposed task · Workflow illustration',
       illustration: 'Structures and spectra are schematic.',
       nodes: [
-        ['600 nm', 51, 43, 'task-specification', 'Optimise the fluorescence emission at a fixed wavelength.'],
-        ['Formulation', 26, 12, 'search-space', 'Choose one of 48 combinations of pH, MPA and Na₂S.'],
-        ['Paired wells', 76, 24, 'observations', 'A query retrieves the recorded measurements from two replicate wells.'],
-        ['Spectra', 25, 63, 'observations', 'Inspect raw absorbance and fluorescence emission from both wells.'],
-        ['Next query', 75, 72, 'interaction', 'Revise the formulation within the configured experimental budget.'],
-        ['Score', 42, 89, 'evaluation', 'Average the submitted pair at 600 nm and compare it with the best plate mean.'],
+        ['600 nm', 51, 43, 'task-specification', 'Optimise the fluorescence emission at a fixed wavelength.', 'A fixed wavelength makes the objective comparable across formulations.'],
+        ['Formulation', 26, 12, 'search-space', 'Choose one of 48 combinations of pH, MPA and Na₂S.', 'The recorded candidate space defines which formulations the agent can query.'],
+        ['Paired wells', 76, 24, 'observations', 'A query retrieves the recorded measurements from two replicate wells.', 'Two wells give a check on variation between replicate measurements.'],
+        ['Spectra', 25, 63, 'observations', 'Inspect raw absorbance and fluorescence emission from both wells.', 'The emission spectrum shows the signal at the target wavelength.'],
+        ['Next query', 75, 72, 'interaction', 'Revise the formulation within the configured experimental budget.', 'Each query trades off testing a promising formulation against learning about a new one.'],
+        ['Score', 42, 89, 'evaluation', 'Average the submitted pair at 600 nm and compare it with the best plate mean.', 'The plate mean supplies a measured reference for how close the submitted formulation came to the best.'],
       ],
       edges: [[0,1],[1,2],[2,3],[3,4],[4,1,'feedback'],[3,5],[0,5]],
     },
@@ -93,12 +93,12 @@
       source: 'Proposed task · Workflow illustration',
       illustration: 'The displayed yields are measured examples in an illustrative order.',
       nodes: [
-        ['C–N coupling', 49, 40, 'reaction-target', 'The reactants and molecular target stay fixed during the search.'],
-        ['Conditions', 26, 12, 'reaction-target', 'Choose a catalyst, base and solvent from recorded candidate conditions.'],
-        ['Experiment', 77, 22, 'interaction', 'A new valid condition consumes one of four available experiments.'],
-        ['Yield', 25, 65, 'observations', 'Read the recorded reaction yield for the chosen conditions.'],
-        ['Revise', 76, 68, 'interaction', 'Use the measured yield to decide which condition to try next.'],
-        ['Success', 52, 89, 'evaluation', 'A run succeeds if any tested condition produces a measured yield above 10%.'],
+        ['C–N coupling', 49, 40, 'reaction-target', 'The reactants and molecular target stay fixed during the search.', 'A fixed reaction target makes yields comparable across candidate conditions.'],
+        ['Conditions', 26, 12, 'reaction-target', 'Choose a catalyst, base and solvent from recorded candidate conditions.', 'These choices define the next condition that can be tested.'],
+        ['Experiment', 77, 22, 'interaction', 'A new valid condition consumes one of four available experiments.', 'A limited budget makes the order of the tested conditions matter.'],
+        ['Yield', 25, 65, 'observations', 'Read the recorded reaction yield for the chosen conditions.', 'Yield feedback shows whether the tested condition meets the success threshold.'],
+        ['Revise', 76, 68, 'interaction', 'Use the measured yield to decide which condition to try next.', 'Feedback can guide the next choice before the experiment budget runs out.'],
+        ['Success', 52, 89, 'evaluation', 'A run succeeds if any tested condition produces a measured yield above 10%.', 'The threshold determines whether the search found a successful condition.'],
       ],
       edges: [[0,1],[1,2],[2,3],[3,4],[4,1,'feedback'],[3,5]],
     },
@@ -147,14 +147,29 @@
     host.classList.add('task-map');
     host.innerHTML = `
       <div class="task-map-layout">
-        <nav class="task-map-side" aria-label="Knowledge graph for ${task.heading}">
-          <div class="task-map-kicker">Task map <i aria-hidden="true"></i></div>
-          <div class="task-map-network">
-            <svg class="task-map-edges" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${edges}</svg>
-            ${nodes}
-          </div>
-          <div class="task-map-hint">${task.video ? 'Select a node to jump to its chapter.' : 'Select a node to explore its role.'}</div>
-        </nav>
+        <div class="task-map-sidebar">
+          <nav class="task-map-side" aria-label="Knowledge graph for ${task.heading}">
+            <div class="task-map-kicker">Task map <i aria-hidden="true"></i></div>
+            <div class="task-map-network">
+              <svg class="task-map-edges" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${edges}</svg>
+              ${nodes}
+            </div>
+            <div class="task-map-hint">${task.video ? 'Select a node to jump to its chapter.' : 'Select a node to explore its role.'}</div>
+          </nav>
+          <aside class="task-map-step" aria-label="Current step">
+            <div aria-live="polite" aria-atomic="true">
+              <p class="task-map-step-kicker" data-map-step-kicker></p>
+              <strong class="task-map-step-title" data-map-label></strong>
+              <dl>
+                <dt>What happens</dt>
+                <dd data-map-copy></dd>
+                <dt>Why it matters</dt>
+                <dd data-map-reason></dd>
+              </dl>
+            </div>
+            ${task.image ? '<a data-map-protocol>Read protocol ↗</a>' : ''}
+          </aside>
+        </div>
         <div class="task-map-media">
           ${task.video ? `
             <div class="task-map-player">
@@ -179,7 +194,6 @@
             </div>
             <p class="task-map-error" hidden>Video unavailable. <a href="assets/workflows/${task.video}">Open the video file</a>.</p>
           ` : `<div class="task-map-illustration">${existingFigure ? '' : `<figure><img src="assets/${task.image}" alt="Workflow illustration for ${task.heading}" width="2816" height="1584"><figcaption>${task.illustration}</figcaption></figure>`}</div>`}
-          <div class="task-map-caption" aria-live="polite"><strong data-map-label></strong><span data-map-copy></span>${task.image ? '<a data-map-protocol>Read protocol ↗</a>' : ''}</div>
           <div class="task-map-source">${task.source}</div>
         </div>
       </div>`;
@@ -187,20 +201,24 @@
 
     const buttons = [...host.querySelectorAll('[data-map-node]')];
     const paths = [...host.querySelectorAll('[data-from]')];
+    const kicker = host.querySelector('[data-map-step-kicker]');
     const label = host.querySelector('[data-map-label]');
     const copy = host.querySelector('[data-map-copy]');
+    const reason = host.querySelector('[data-map-reason]');
     const protocol = host.querySelector('[data-map-protocol]');
     const video = host.querySelector('video');
     let active = -1;
     function select(index) {
       if (index === active) return;
       active = index;
-      const [name,,, destination, description] = task.nodes[index];
+      const [name,,, destination, description, rationale] = task.nodes[index];
       buttons.forEach((button, i) => button.setAttribute('aria-pressed', String(i === index)));
       paths.forEach(path => path.classList.toggle('current',
         Number(path.dataset.from) === index || Number(path.dataset.to) === index));
       label.textContent = name;
+      kicker.textContent = task.video ? `Chapter · ${clock(destination)}` : 'Workflow step';
       copy.textContent = description;
+      reason.textContent = rationale;
       if (protocol) protocol.href = detailUrl + '#' + destination;
     }
     select(0);
