@@ -60,7 +60,7 @@
     solid: {
       heading: 'Predict solid electrolyte properties.',
       video: 'solid-electrolyte.mp4?v=arrows-1', duration: 42.28,
-      featurePoster: 'solid-electrolyte-opening-frame.webp',
+      poster: 'solid-electrolyte-opening-frame.webp',
       source: 'PSI-Bench · Schematic evaluation workflow',
       nodes: [
         ['Crystal', 48, 43, 0, 'The reference structure provides scientific context for the prediction task.'],
@@ -128,7 +128,7 @@
   function render(host, key, detailUrl = '') {
     const task = graphs[key];
     if (!task) return;
-    const poster = (detailUrl && task.featurePoster) || task.poster;
+    const poster = task.poster;
     const existingFigure = detailUrl ? null : host.querySelector('figure');
     const nodes = task.nodes.map(([label,x,y], index) => `
       <button class="task-map-node" type="button" data-map-node="${index}" style="--node-x:${x}%;--node-y:${y}%" aria-pressed="false">

@@ -141,14 +141,25 @@ const catalog = `<main class="wrap catalogue-main">
  </section>
  <p class="catalog-protocols"><a class="small-link" href="../tasks.html#task-protocols">Protocols &amp; scoring <span aria-hidden="true">↗</span></a></p>
 </main>`;
-const detail = '<main class="wrap"><section class="detail-intro"><a class="back-link" href="../tasks.html#task-cards">← Back to task cards</a><h1 class="detail-title">Colour matching</h1></section><section data-task-map="colour" aria-label="Colour-matching task map"></section><details class="task-map-extra"><summary>Interactive workflow</summary>'+caseMarkup()+'</details></main>';
+function taskDetailHeading(task, back) {
+ return `<section class="detail-intro">
+  ${back}
+  <p class="task-detail-label">Task ${task.number} · ${task.status}</p>
+  <h1 class="detail-title">${task.title}</h1>
+ </section>`;
+}
+const taskBack = '<a class="back-link" href="../tasks.html#task-cards">← Back to task cards</a>';
+const detail = `<main class="wrap task-detail-main">
+ ${taskDetailHeading(taskEntries[0], taskBack)}
+ <section data-task-map="colour" aria-label="Colour-matching task map"></section>
+ <details class="task-map-extra"><summary>Interactive workflow</summary>${caseMarkup()}</details>
+</main>`;
 function videoTaskMarkup() {
  const id = document.body.dataset.task || new URLSearchParams(location.search).get('task');
  const task = taskEntries.find(entry => entry.id === id && entry.scene);
- const back = '<a class="back-link" href="../tasks.html#task-cards">← Back to task cards</a>';
- if (!task) return '<main class="wrap detail-intro">'+back+'<h1 class="detail-title">Case not found</h1></main>';
+ if (!task) return '<main class="wrap task-detail-main"><section class="detail-intro">'+taskBack+'<h1 class="detail-title">Case not found</h1></section></main>';
  document.title = task.title + ' · AISLE task card';
- return interactiveTaskMarkup(task,back);
+ return interactiveTaskMarkup(task, taskDetailHeading(task, taskBack));
 
 }
 if (embedded) {
@@ -156,7 +167,7 @@ if (embedded) {
  app.innerHTML = catalog;
  for (const link of app.querySelectorAll('a[href]')) link.target = '_top';
 } else {
- app.innerHTML = header + (isVideoTask ? videoTaskMarkup() : isDetail ? detail : catalog)
+ app.innerHTML = (isVideoTask ? videoTaskMarkup() : isDetail ? detail : header + catalog)
    + footer + (isDetail ? dialog : '');
 }
 if (isVideoTask) {
