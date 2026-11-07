@@ -9,10 +9,11 @@
 }
 .task-map [hidden] { display: none !important; }
 .task-map-layout { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 22px; align-items: start; }
+.task-map-sidebar { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .task-map-side { border-right: 1px solid var(--map-line); padding: 8px 12px 10px 0; min-width: 0; }
 .task-map-kicker, .task-map-hint, .task-map-source { font-size: 12px; }
 .task-map-kicker { display: flex; align-items: center; justify-content: space-between; font-weight: 600; }
-.task-map-kicker i, .task-map-caption strong::before {
+.task-map-kicker i {
   display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--map-teal);
 }
 .task-map-hint, .task-map-source { color: var(--map-muted); }
@@ -148,10 +149,21 @@
 .task-map-illustration figure { margin: 0; }
 .task-map-illustration img { display: block; width: 100%; height: auto; }
 .task-map-illustration figcaption { margin-top: 8px; color: var(--map-muted); font-size: 12px; }
-.task-map-caption { display: flex; flex-wrap: wrap; gap: 4px 13px; padding: 13px 0; font-size: 13px; line-height: 1.5; }
-.task-map-caption strong::before { content: ""; margin: 0 9px 2px 0; }
-.task-map-caption span { color: var(--map-muted); }
-.task-map-caption a, .task-map-error a { text-decoration: underline; text-underline-offset: 3px; }
+.task-map-step {
+  padding: 11px 12px 12px;
+  border: 1px solid var(--map-line);
+  border-radius: 9px;
+  background: var(--map-paper);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.task-map-step-kicker { font-size: 10px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; }
+.task-map-step-title { display: block; margin-top: 2px; font-size: 16px; font-weight: 600; }
+.task-map-step dl { margin: 8px 0 0; }
+.task-map-step dt { margin-top: 7px; font-size: 11px; font-weight: 600; }
+.task-map-step dd { margin: 2px 0 0; color: var(--map-muted); }
+.task-map-step a { display: inline-block; margin-top: 8px; font-size: 12px; }
+.task-map-step a, .task-map-error a { text-decoration: underline; text-underline-offset: 3px; }
 .task-map-source { border-top: 1px solid var(--map-line); padding: 9px 0; }
 .task-map-error { font-size: 13px; margin: 8px 0; }
 .task-map-feature { margin: 30px 0 0; border-top: 1px solid #d4c9b9; padding-top: 16px; }

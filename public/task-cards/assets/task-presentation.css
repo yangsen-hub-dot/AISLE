@@ -61,6 +61,11 @@
 }
 :is(.catalogue-main, .task-detail-main) .task-map-node[aria-pressed="true"] .task-map-label { color: var(--accent); }
 :is(.catalogue-main, .task-detail-main) .task-map-hint { line-height: 1.5; }
+:is(.catalogue-main, .task-detail-main) .task-map-step {
+  border-color: #365977;
+  background: linear-gradient(145deg, #162e46, var(--paper));
+}
+:is(.catalogue-main, .task-detail-main) .task-map-step :is(.task-map-step-kicker, dt, a) { color: var(--accent); }
 
 :is(.catalogue-main, .task-detail-main) .task-map-player,
 :is(.catalogue-main, .task-detail-main) .task-map-illustration {
@@ -111,17 +116,19 @@
 }
 :is(.catalogue-main, .task-detail-main) .task-map-player:fullscreen .task-map-screen { height: 100%; }
 :is(.catalogue-main, .task-detail-main) .task-map-player:fullscreen video { aspect-ratio: auto; }
-:is(.catalogue-main, .task-detail-main) .task-map-caption { padding: 12px 0 5px; }
-:is(.catalogue-main, .task-detail-main) .task-map-source { padding: 0; border: 0; }
+:is(.catalogue-main, .task-detail-main) .task-map-source { padding: 9px 0 0; border: 0; }
 :is(.catalogue-main, .task-detail-main) .task-map-illustration img { max-height: none; }
 :is(.catalogue-main, .task-detail-main) .small-link { color: var(--accent); }
 
-@media (max-width: 650px) {
+@media (max-width: 820px) {
   :is(.catalogue-main, .task-detail-main) .task-map-layout { grid-template-columns: minmax(0, 1fr); gap: 15px; }
   :is(.catalogue-main, .task-detail-main) .task-map-media { grid-row: 1; }
   :is(.catalogue-main, .task-detail-main) .task-map-side { border: 1px solid var(--line); border-radius: 9px; }
   :is(.catalogue-main, .task-detail-main) .task-map-network { height: 236px; width: min(100%, 330px); margin-inline: auto; }
   :is(.catalogue-main, .task-detail-main) .task-map-hint { text-align: center; }
+  :is(.catalogue-main, .task-detail-main) .task-map-step { order: -1; }
+}
+@media (max-width: 650px) {
   :is(.catalogue-main, .task-detail-main) .task-map-player { border-radius: 11px; }
   :is(.catalogue-main, .task-detail-main) .task-map-player.is-enhanced {
     grid-template-areas: "screen" "play" "controls";

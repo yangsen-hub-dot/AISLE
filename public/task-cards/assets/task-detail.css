@@ -63,7 +63,6 @@ body.task-detail-page {
   font: 500 clamp(29px, 3.2vw, 46px)/1.14 var(--sans);
   letter-spacing: -.035em;
 }
-.task-detail-main .task-map-caption,
 .task-detail-main .task-map-source { line-height: 1.5; }
 .task-detail-main .task-map-extra {
   margin: 22px 0 0;
