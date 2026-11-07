@@ -4,7 +4,7 @@
   const graphs = {
     colour: {
       heading: 'Can the agent match a target colour using experimental feedback?',
-      video: 'colour-matching.mp4', poster: 'suzhou-film-card.webp', duration: 36,
+      video: 'colour-matching.mp4', poster: 'colour-matching-opening-frame.webp', duration: 36,
       source: 'Suzhou Real-4D · Illustrated experimental workflow',
       nodes: [
         ['Target', 50, 43, 0, 'Use the fixed target colour for the run.', 'Give every trial the same reference for judging a match.'],
