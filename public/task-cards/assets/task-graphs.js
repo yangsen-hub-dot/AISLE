@@ -60,6 +60,7 @@
     solid: {
       heading: 'Predict solid electrolyte properties.',
       video: 'solid-electrolyte.mp4?v=arrows-1', duration: 42.28,
+      featurePoster: 'solid-electrolyte-opening-frame.webp',
       source: 'PSI-Bench · Schematic evaluation workflow',
       nodes: [
         ['Crystal', 48, 43, 0, 'The reference structure provides scientific context for the prediction task.'],
@@ -127,6 +128,7 @@
   function render(host, key, detailUrl = '') {
     const task = graphs[key];
     if (!task) return;
+    const poster = (detailUrl && task.featurePoster) || task.poster;
     const existingFigure = detailUrl ? null : host.querySelector('figure');
     const nodes = task.nodes.map(([label,x,y], index) => `
       <button class="task-map-node" type="button" data-map-node="${index}" style="--node-x:${x}%;--node-y:${y}%" aria-pressed="false">
@@ -163,7 +165,7 @@
                 </button>
               </div>
               <div class="task-map-screen">
-                <video src="assets/workflows/${task.video}"${task.poster ? ` poster="assets/${task.poster}"` : ''} controls playsinline preload="${task.poster ? 'none' : 'metadata'}" aria-label="${task.heading}"></video>
+                <video src="assets/workflows/${task.video}"${poster ? ` poster="assets/${poster}"` : ''} controls playsinline preload="${poster ? 'none' : 'metadata'}" aria-label="${task.heading}"></video>
               </div>
               <div class="task-map-controls">
                 <input class="task-map-seek" data-map-seek type="range" min="0" max="${task.duration}" step="0.1" value="0" aria-label="Video position">
