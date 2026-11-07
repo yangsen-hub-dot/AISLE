@@ -3,7 +3,7 @@
   // Node entries are [label, x%, y%, video seconds or protocol anchor, description].
   const graphs = {
     colour: {
-      heading: 'Match a fixed target colour.',
+      heading: 'Can the agent match a target colour using experimental feedback?',
       video: 'colour-matching.mp4', poster: 'suzhou-film-card.webp', duration: 36,
       source: 'Suzhou Real-4D · Illustrated experimental workflow',
       nodes: [
@@ -16,7 +16,7 @@
       edges: [[0,1],[0,3],[1,2],[2,3],[3,4],[4,1,'feedback']],
     },
     constraints: {
-      heading: 'Find a colour match within the allowed region.',
+      heading: 'Can the agent match a colour safely?',
       video: 'constraint-adherence.mp4', poster: 'constraint-adherence-v19.webp', duration: 36,
       source: 'Illustrative replay · Forbidden bands are simulated proxy constraints',
       nodes: [
@@ -30,7 +30,7 @@
       edges: [[0,1],[0,4],[1,3],[2,3],[2,4],[3,5],[4,5]],
     },
     robustness: {
-      heading: 'Recover from a hidden pipetting drift.',
+      heading: 'Can the agent recover when the lab changes?',
       video: 'adaptive-robustness.mp4', poster: 'adaptive-robustness-v20.webp', duration: 38,
       source: 'Illustrative drift replay · Sequential measurements',
       nodes: [
@@ -44,7 +44,7 @@
       edges: [[0,1],[1,2],[2,3],[3,4],[4,0],[4,5],[4,3,'feedback']],
     },
     spectral: {
-      heading: 'Infer a hidden chemical transition.',
+      heading: 'Can the agent infer the hidden transition?',
       video: 'spectral-inference.mp4', poster: 'spectral-inference-v21.webp', duration: 40,
       source: 'Illustrative case using synthetic spectra · Report a pKa estimate and a 95% interval.',
       nodes: [
@@ -58,7 +58,7 @@
       edges: [[0,1],[0,2],[0,3],[0,4],[0,5],[1,2],[2,3],[3,4],[4,1,'feedback'],[4,5]],
     },
     solid: {
-      heading: 'Predict solid electrolyte properties.',
+      heading: 'Can a model predict solid electrolyte performance?',
       video: 'solid-electrolyte.mp4?v=arrows-1', duration: 42.28,
       poster: 'solid-electrolyte-opening-frame.webp',
       source: 'PSI-Bench · Schematic evaluation workflow',
@@ -73,7 +73,7 @@
       edges: [[0,1],[1,2],[2,3],[3,4],[5,4]],
     },
     'quantum-dot': {
-      heading: 'Find the brightest formulation at 600 nm.',
+      heading: 'Which formulation gives the strongest fluorescence at 600 nm?',
       image: 'quantum-dot-workflow-cover.webp',
       source: 'Proposed task · Workflow illustration',
       illustration: 'Structures and spectra are schematic.',
@@ -88,7 +88,7 @@
       edges: [[0,1],[1,2],[2,3],[3,4],[4,1,'feedback'],[3,5],[0,5]],
     },
     'buchwald-hartwig': {
-      heading: 'Find conditions for a successful C–N coupling.',
+      heading: 'Can a model find conditions for a successful C–N coupling within four experiments?',
       image: 'buchwald-hartwig-workflow-cover.webp',
       source: 'Proposed task · Workflow illustration',
       illustration: 'The displayed yields are measured examples in an illustrative order.',
@@ -128,6 +128,8 @@
   function render(host, key, detailUrl = '') {
     const task = graphs[key];
     if (!task) return;
+    const detailHeading = host.closest('main')?.querySelector('[data-detail-case-heading]');
+    if (detailHeading) detailHeading.textContent = task.heading;
     const poster = task.poster;
     const existingFigure = detailUrl ? null : host.querySelector('figure');
     const nodes = task.nodes.map(([label,x,y], index) => `

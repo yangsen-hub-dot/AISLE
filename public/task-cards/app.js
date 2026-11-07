@@ -145,7 +145,7 @@ function taskDetailHeading(task, back) {
  return `<section class="detail-intro">
   ${back}
   <p class="task-detail-label">Task ${task.number} · ${task.status}</p>
-  <h1 class="detail-title">${task.title}</h1>
+  <h1 class="detail-title" data-detail-case-heading>${task.title}</h1>
  </section>`;
 }
 const taskBack = '<a class="back-link" href="../tasks.html#task-cards">← Back to task cards</a>';
